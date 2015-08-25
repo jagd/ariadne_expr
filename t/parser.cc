@@ -5,12 +5,14 @@
 #include <memory>
 #include <sstream>
 
-TEST(Parser, Ctor) {
+TEST(Parser, Ctor)
+{
     std::istringstream s("");
     EXPECT_NO_THROW(auto p = Parser(s));
 }
 
-TEST(Parser, Token1) {
+TEST(Parser, Token1)
+{
     std::istringstream s("A.f(x,y) 3.14e-2 + (\"wu\" - 4) /r \t ");
     auto p = Parser(s);
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
@@ -24,4 +26,36 @@ TEST(Parser, Token1) {
     EXPECT_EQ(Parser::TK::OP, p.token());
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
     EXPECT_EQ(Parser::TK::END, p.token());
+}
+
+TEST(Parser, Token2)
+{
+    std::istringstream s("A.f(x,y, \")\") 3.14e-2");
+    auto p = Parser(s);
+    EXPECT_EQ(Parser::TK::SYMBOL, p.token());
+    EXPECT_EQ(Parser::TK::REAL, p.token());
+    EXPECT_EQ(Parser::TK::END, p.token());
+}
+
+TEST(Parser, Token3)
+{
+    std::istringstream s("A.f(x,y, (((\")\")))) 3.14e-2");
+    auto p = Parser(s);
+    EXPECT_EQ(Parser::TK::SYMBOL, p.token());
+    EXPECT_EQ(Parser::TK::REAL, p.token());
+    EXPECT_EQ(Parser::TK::END, p.token());
+}
+
+TEST(Parser, Token4)
+{
+    std::istringstream s("A.f(x,y, (((\")\"))) 3.14e-2");
+    auto p = Parser(s);
+    EXPECT_EQ(Parser::TK::ERROR, p.token());
+}
+
+TEST(Parser, Token5)
+{
+    std::istringstream s("A.f(x,y, \") 3.14e-2");
+    auto p = Parser(s);
+    EXPECT_EQ(Parser::TK::ERROR, p.token());
 }

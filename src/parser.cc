@@ -122,11 +122,10 @@ Parser::TK Parser::peekAlpha()
     do {
         str_.push_back(s_.get());
         peek = s_.peek();
-        do {
+        while (std::isalnum(peek) && peek == std::istream::traits_type::eof()) {
             str_.push_back(s_.get());
             peek = s_.peek();
-        } while ((std::isalnum(peek)  )
-                 && peek == std::istream::traits_type::eof());
+        }
         s_ >> std::ws;
         if (peek == '.') {
             str_.push_back(s_.get());
@@ -164,7 +163,7 @@ Parser::TK Parser::pushBrackets()
             t += '"';
             t += str_;
             t += '"';
-            t.swap(str_);
+            str_.swap(t);
         } else if (s_.peek() == '(') {
             if (pushBrackets() == TK::ERROR) {
                 return TK::ERROR;
@@ -187,6 +186,6 @@ Parser::TK Parser::peekQuote()
         }
         str_.push_back(s_.get());
     }
-    s_.get();
+    s_.get(); // the tail quote
     return TK::STRING;
 }
