@@ -2,7 +2,7 @@
 #include "ast.h"
 
 #include <istream>
-#include <curses.h>
+#include <cctype>
 
 Parser::Parser(std::istream &s) : s_(s)
 {

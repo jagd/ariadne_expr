@@ -1,5 +1,6 @@
 #include "ast.h"
 #include <memory>
+#include <string>
 
 Ast::Ast() : t(Ast::T::UNKNOWN)
 {

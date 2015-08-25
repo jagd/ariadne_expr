@@ -2,6 +2,7 @@
 #define HEADER_82DEFF939A154BFA8787C84C8BB5CD66
 
 #include <memory>
+#include <string>
 
 struct Ast
 {
