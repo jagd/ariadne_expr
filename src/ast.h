@@ -18,6 +18,7 @@ struct Ast
     Ast(O o);
     static std::unique_ptr<Ast> make(double v);
     static std::unique_ptr<Ast> make(O o);
+    static std::unique_ptr<Ast> make(bool b);
     static std::unique_ptr<Ast> makeString(const std::string &s);
     static std::unique_ptr<Ast> makeSymbol(const std::string &s);
     T t;

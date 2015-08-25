@@ -45,3 +45,7 @@ std::unique_ptr<Ast> Ast::makeSymbol(const std::string &s)
     return std::unique_ptr<Ast>(std::move(r));
 }
 
+std::unique_ptr<Ast> Ast::make(bool b)
+{
+    return std::unique_ptr<Ast>(new Ast(b));
+}
