@@ -17,6 +17,10 @@ Ast::Ast(Ast::O o) : t(Ast::T::OPERATOR), op(o)
 {
 }
 
+Ast::Ast(bool b) : t(Ast::T::BOOLEAN), b(b)
+{
+}
+
 std::unique_ptr<Ast> Ast::make(Ast::O o)
 {
     return std::unique_ptr<Ast>(new Ast(o));
@@ -40,3 +44,4 @@ std::unique_ptr<Ast> Ast::makeSymbol(const std::string &s)
     r->t =Ast::T::SYMBOL;
     return std::unique_ptr<Ast>(std::move(r));
 }
+
