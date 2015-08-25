@@ -9,7 +9,7 @@ parameter_list		:= parameter_list
 			 | char + parameter_list
 			 | epsilon
 
-// parameter_list		:= expression + parameter_list_tail
+// parameter_list		:= expr + parameter_list_tail
 // 			 | epsilon
 // parameter_list_tail	:= ',' + parameter_list
 
