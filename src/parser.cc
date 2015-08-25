@@ -23,23 +23,30 @@ Parser::TK Parser::token()
         return TK::REAL;
     } else switch (peek) {
             case '-':
+                s_.get();
                 op_ = Ast::O::MINUS;
                 return TK::OP;
             case '+':
+                s_.get();
                 op_ = Ast::O::PLUS;
                 return TK::OP;
             case '*':
+                s_.get();
                 op_ = Ast::O::MULTIPLY;
                 return TK::OP;
             case '/':
+                s_.get();
                 op_ = Ast::O::DIVISION;
                 return TK::OP;
             case '^':
+                s_.get();
                 op_ = Ast::O::POWER;
                 return TK::OP;
             case '(':
+                s_.get();
                 return TK::BRACKET_OPEN;
             case ')':
+                s_.get();
                 return TK::BRACKET_CLOSE;
             case '=':
                 return peekEQ();
@@ -49,6 +56,8 @@ Parser::TK Parser::token()
                 return peekGT();
             case '!':
                 return peekNot();
+            case '"':
+                return peekQuote();
             default:
                 msg_ = "invalid symbol ";
                 msg_ += static_cast<char>(peek);
