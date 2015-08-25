@@ -136,7 +136,7 @@ Parser::TK Parser::peekAlpha()
                 return TK::ERROR;
             }
         }
-    } while (std::isalpha(s_.peek()));
+    } while (std::isalpha(s_.peek()) || s_.peek() == '.');
     if (str_ == "true") {
         return TK::T;
     } else if (str_ == "FALSE") {
@@ -147,7 +147,7 @@ Parser::TK Parser::peekAlpha()
 
 Parser::TK Parser::pushBrackets()
 {
-    s_.get();
+    str_.push_back(s_.get());
     while (s_.peek() != ')') {
         if (s_.peek() == std::istream::traits_type::eof()) {
             msg_ = "unmatched parethenses";
@@ -188,4 +188,55 @@ Parser::TK Parser::peekQuote()
     }
     s_.get(); // the tail quote
     return TK::STRING;
+}
+
+Ast::Ptr Parser::parseAtomicExpr()
+{
+    auto tk = token();
+    switch (tk) {
+        case TK::END:
+            msg_ = "unexpected end";
+            return nullptr;
+        case TK::SYMBOL:
+            return Ast::makeSymbol(str_);
+        case TK::STRING:
+            return Ast::makeString(str_);
+        case TK::REAL:
+            return Ast::make(num_);
+        case TK::T:
+            return Ast::make(true);
+        case TK::F:
+            return Ast::make(false);
+        case TK::BRACKET_OPEN: {
+                Ast::Ptr root = parseExpr();
+                if (!root) {
+                    dumpPosition();
+                    return nullptr;
+                }
+                if (token() != TK::BRACKET_CLOSE) {
+                    msg_ = "expect )";
+                    dumpPosition();
+                    return nullptr;
+                }
+                return root;
+            };
+        default:
+            msg_ = "expect something";
+            dumpPosition();
+            return nullptr;
+    }
+}
+
+void Parser::dumpPosition()
+{
+    std::string word;
+    s_ >> word;
+    msg_ += " before '";
+    msg_ += word.empty() ? "the end" : word;
+    msg_ += '\'';
+}
+
+Ast::Ptr Parser::parseExpr()
+{
+    return nullptr;
 }

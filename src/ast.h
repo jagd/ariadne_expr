@@ -24,7 +24,7 @@ struct Ast
     T t;
     union {
         O op;
-        double val;
+        double num;
         bool b;
     };
     std::string str;

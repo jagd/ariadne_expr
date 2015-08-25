@@ -18,33 +18,33 @@ expr_tail	:= '||' + expr
 		 | '&&' + expr
 		 | epsilon
 
-cmp_expr		:= cmp_expr_operand + cmp_expr_tail
-cmp_expr_tail		:= '==' + cmp_expr_operand
-			 | '!=' + cmp_expr_operand
-			 | '>'  + cmp_expr_operand
-			 | '>=' + cmp_expr_operand
-			 | '<'  + cmp_expr_operand
-			 | '<=' + cmp_expr_operand
+cmp_expr		:= plus_minus_expr + cmp_expr_tail
+cmp_expr_tail		:= '==' + plus_minus_expr
+			 | '!=' + plus_minus_expr
+			 | '>'  + plus_minus_expr
+			 | '>=' + plus_minus_expr
+			 | '<'  + plus_minus_expr
+			 | '<=' + plus_minus_expr
 			 | epsilon
-
-cmp_expr_operand	:= '!' + cmp_expr_operand
-			 | plus_minus_expr
-			 | true
-			 | false
 
 atomic_expr		:= '(' + expr + ')'
 			 | symbol
 			 | string
 			 | number
+			 | true
+			 | false
+
 negable_atomic_expr	:= '+' + atomic_expr
 			 | '-' + atomic_expr
+			 | '!' + atomic_expr
 			 | atomic_expr
 
 pot_expr		:= atomic_expr + pot_expr_tail
 pot_expr_tail		:= '^' + negable_atomic_expr
 			 | epsilon
 negable_pot_expr	:= '+' + pot_expr
-			:= '-' + pot_expr
+			 | '-' + pot_expr
+			 | '!' + pot_expr
 			 | pot_expr
 
 muldivmod_expr		:= negable_pot_expr + muldivmod_expr_tail

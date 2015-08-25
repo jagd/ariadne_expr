@@ -60,3 +60,21 @@ TEST(Parser, Token5)
     auto p = Parser(s);
     EXPECT_EQ(Parser::TK::ERROR, p.token());
 }
+
+TEST(Parser, AtomicExpr1)
+{
+    std::istringstream s("A.f(x,(y),z).x");
+    auto p = Parser(s);
+    auto t = p.parseAtomicExpr();
+    EXPECT_EQ(Ast::T::SYMBOL, t->t);
+    EXPECT_EQ("A.f(x,(y),z).x", t->str);
+}
+
+TEST(Parser, AtomicExpr2)
+{
+    std::istringstream s("3.14e-3");
+    auto p = Parser(s);
+    auto t = p.parseAtomicExpr();
+    EXPECT_EQ(Ast::T::REAL, t->t);
+    EXPECT_DOUBLE_EQ(3.14e-3, t->num);
+}
