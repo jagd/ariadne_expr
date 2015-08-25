@@ -13,7 +13,7 @@ TEST(Parser, Ctor)
 
 TEST(Parser, Token1)
 {
-    std::istringstream s("A.f(x,y) 3.14e-2 + (\"wu\" - 4) /r \t ");
+    std::istringstream s("A.f(x,y) 3.14e-2 + (\"wu\" - 4) /r!\t ");
     auto p = Parser(s);
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
     EXPECT_EQ(Parser::TK::REAL, p.token());
@@ -25,6 +25,7 @@ TEST(Parser, Token1)
     EXPECT_EQ(Parser::TK::BRACKET_CLOSE, p.token());
     EXPECT_EQ(Parser::TK::OP, p.token());
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
+    EXPECT_EQ(Parser::TK::OP, p.token());
     EXPECT_EQ(Parser::TK::END, p.token());
 }
 
