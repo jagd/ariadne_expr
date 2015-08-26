@@ -35,12 +35,12 @@ add_library(parser SHARED
     src/parser.h
     src/ast.h
     src/ast.cc
-    )
+    src/interface.h src/interface.cc)
 set_target_properties(parser PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 add_executable(demo
 	src/main.cc
-	)
+	src/interface.h src/interface.cc)
 target_link_libraries(demo parser)
 
 ########################################
