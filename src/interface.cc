@@ -31,9 +31,10 @@ bool Expression::parse(const std::string &expr)
     std::istringstream s(expr);
     auto p = Parser(s);
     impl_->ast_ = p.parseExpr();
-    if (p.token() != Parser::TK::END) {
+    if (!p.eof()) {
         impl_->hasError_ = true;
         impl_->msg_ = "gabages after the end of the expression";
+        return false;
     }
     if (impl_->ast_) {
         impl_->hasError_ = false;

@@ -13,6 +13,7 @@ public:
         BRACKET_OPEN, BRACKET_CLOSE
     };
     Parser(std::istream &s);
+    bool eof() const { return eof_; }
     TK token();
     Ast::Ptr parseAtomicExpr();
     Ast::Ptr parseDeniableAtomicExpr();
@@ -43,6 +44,7 @@ private:
     TK peekOR();
     Parser::TK pushBrackets();
     Parser::TK peekQuote();
+    bool eof_;
 };
 
 #endif

@@ -81,6 +81,16 @@ TEST(Parser, AtomicExpr2)
     EXPECT_DOUBLE_EQ(3.14e-3, t->num);
 }
 
+TEST(Parser, AtomicExpr3)
+{
+    std::istringstream s("x1");
+    auto p = Parser(s);
+    auto t = p.parseAtomicExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    EXPECT_EQ(Ast::T::SYMBOL, t->t);
+    EXPECT_EQ("x1", t->str);
+}
+
 TEST(Parser, parseDeniableAtomicExpr1)
 {
     std::istringstream s("!false");

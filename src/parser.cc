@@ -4,7 +4,7 @@
 #include <cctype>
 #include <istream>
 
-Parser::Parser(std::istream &s) : s_(s), tk_(TK::UNKNOWN)
+Parser::Parser(std::istream &s) : s_(s), tk_(TK::UNKNOWN), eof_(false)
 {
 }
 
@@ -13,6 +13,7 @@ Parser::TK Parser::token()
     s_ >> std::ws;
     const int peek = static_cast<int>(s_.peek());
     if (peek == std::istream::traits_type::eof()) {
+        eof_ = true;
         msg_ = "EOF";
         return TK::END;
     } else if (std::isalpha(peek)) {
@@ -130,7 +131,7 @@ Parser::TK Parser::peekAlpha()
     do {
         str_.push_back(s_.get());
         peek = s_.peek();
-        while (std::isalnum(peek) && peek == std::istream::traits_type::eof()) {
+        while (std::isalnum(peek)) {
             str_.push_back(s_.get());
             peek = s_.peek();
         }
@@ -474,3 +475,4 @@ Ast::Ptr Parser::parseExpr()
     }
     return root;
 }
+
