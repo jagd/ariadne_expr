@@ -282,6 +282,28 @@ TEST(Parser, parseMulDivModExpr3)
     }
 }
 
+TEST(Parser, parseMulDivModExpr4)
+{
+    std::istringstream s("a/b/c");
+    auto p = Parser(s);
+    auto t = p.parseMulDivModExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    EXPECT_EQ(Ast::T::OPERATOR, t->t);
+    EXPECT_EQ(Ast::O::DIVISION, t->op);
+    EXPECT_TRUE(static_cast<bool>(t->left));
+    EXPECT_EQ(Ast::T::SYMBOL, t->left->t);
+    EXPECT_EQ("a", t->left->str);
+    EXPECT_TRUE(static_cast<bool>(t->right));
+    EXPECT_EQ(Ast::T::OPERATOR, t->right->t);
+    EXPECT_EQ(Ast::O::DIVISION, t->right->op);
+    EXPECT_TRUE(static_cast<bool>(t->right->left));
+    EXPECT_EQ(Ast::T::SYMBOL, t->right->left->t);
+    EXPECT_EQ("b", t->right->left->str);
+    EXPECT_TRUE(static_cast<bool>(t->right->right));
+    EXPECT_EQ(Ast::T::SYMBOL, t->right->right->t);
+    EXPECT_EQ("c", t->right->right->str);
+}
+
 TEST(Parser, parsePlusMinusExpr1)
 {
     for (auto str : {"a+-b", " a + -b", "a +-b", "a+- b"}) {
