@@ -234,9 +234,8 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
             return clt(l,r,dict,msg);
         case Ast::O::CMP_LE:
             return cle(l,r,dict,msg);
-        default:
-            return nullptr;
     }
+    return nullptr;
 }
 
 Ast::Ptr eval(const Ast::Ptr &root, const Ast::Dict &dict, std::string &msg)
