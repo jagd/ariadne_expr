@@ -371,13 +371,7 @@ Ast::Ptr Parser::parseMulDivModExpr()
     Ast::Ptr root;
     switch (op_) {
         case Ast::O::MULTIPLY:
-            swallowToken();
-            root = Ast::make(op_);
-            break;
         case Ast::O::DIVISION:
-            swallowToken();
-            root = Ast::make(op_);
-            break;
         case Ast::O::MODULUS:
             swallowToken();
             root = Ast::make(op_);
@@ -407,9 +401,6 @@ Ast::Ptr Parser::parsePlusMinusExpr()
     Ast::Ptr root;
     switch (op_) {
         case Ast::O::PLUS:
-            swallowToken();
-            root = Ast::make(op_);
-            break;
         case Ast::O::MINUS:
             swallowToken();
             root = Ast::make(op_);
@@ -419,6 +410,39 @@ Ast::Ptr Parser::parsePlusMinusExpr()
     }
     root->left = std::move(a);
     root->right = parseMulDivModExpr();
+    if (!root->right) {
+        return nullptr;
+    }
+    return root;
+}
+
+Ast::Ptr Parser::parseCmpExpr()
+{
+    preToken();
+    auto a = parsePlusMinusExpr();
+    if (!a) {
+        return nullptr;
+    }
+    preToken();
+    if (tk_ != TK::OP) {
+        return a;
+    }
+    Ast::Ptr root;
+    switch (op_) {
+        case Ast::O::CMP_EQ:
+        case Ast::O::CMP_NE:
+        case Ast::O::CMP_GT:
+        case Ast::O::CMP_GE:
+        case Ast::O::CMP_LT:
+        case Ast::O::CMP_LE:
+            swallowToken();
+            root = Ast::make(op_);
+            break;
+        default:
+            return a;
+    }
+    root->left = std::move(a);
+    root->right = parsePlusMinusExpr();
     if (!root->right) {
         return nullptr;
     }

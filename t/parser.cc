@@ -316,3 +316,29 @@ TEST(Parser, parsePlusMinusExpr2)
         EXPECT_EQ("b", t->right->right->str);
     }
 }
+
+TEST(Parser, parseCmpExpr)
+{
+    const char *expr[] = {"a==-b", "a!=-b", "a<-b", "a<=-b", "a>-b", "a>=-b"};
+    const Ast::O op[] = {Ast::O::CMP_EQ, Ast::O::CMP_NE, Ast::O::CMP_LT,
+                         Ast::O::CMP_LE, Ast::O::CMP_GT, Ast::O::CMP_GE};
+    // avoid to introduce boost::zip
+    for (int i = 0; i < 6; ++i) {
+        std::istringstream s(&expr[i][0]);
+        auto p = Parser(s);
+        auto t = p.parseCmpExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+        EXPECT_EQ(Ast::T::OPERATOR, t->t);
+        EXPECT_EQ(op[i], t->op);
+        EXPECT_TRUE(static_cast<bool>(t->left));
+        EXPECT_EQ(Ast::T::SYMBOL, t->left->t);
+        EXPECT_EQ("a", t->left->str);
+        EXPECT_TRUE(static_cast<bool>(t->right));
+        EXPECT_EQ(Ast::T::OPERATOR, t->right->t);
+        EXPECT_EQ(Ast::O::MINUS, t->right->op);
+        EXPECT_FALSE(static_cast<bool>(t->right->left));
+        EXPECT_TRUE(static_cast<bool>(t->right->right));
+        EXPECT_EQ(Ast::T::SYMBOL, t->right->right->t);
+        EXPECT_EQ("b", t->right->right->str);
+    }
+}

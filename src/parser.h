@@ -21,6 +21,7 @@ public:
     Ast::Ptr genericDeniableExpr(std::function<Ast::Ptr()>);
     Ast::Ptr parseMulDivModExpr();
     Ast::Ptr parsePlusMinusExpr();
+    Ast::Ptr parseCmpExpr();
 private:
     std::istream &s_;
     std::string msg_;
