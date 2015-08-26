@@ -341,3 +341,13 @@ TEST(Parser, parseCmpExpr)
         EXPECT_EQ("b", t->right->right->str);
     }
 }
+
+TEST(Parser, parseExpr)
+{
+    for (auto str : {"a+c^(2*b.x.f(y+x))!=3||b||c", "a&&b||c^2^3^4*5"}) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+    }
+}
