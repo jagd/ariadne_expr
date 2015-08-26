@@ -78,3 +78,24 @@ TEST(Parser, AtomicExpr2)
     EXPECT_EQ(Ast::T::REAL, t->t);
     EXPECT_DOUBLE_EQ(3.14e-3, t->num);
 }
+
+TEST(Parser, AtomicExpr3)
+{
+    std::istringstream s("true && false || 0");
+    auto p = Parser(s);
+    auto t = p.parseAtomicExpr();
+    EXPECT_EQ(Ast::T::BOOLEAN, t->t);
+    EXPECT_EQ(true, t->b);
+    t = p.parseAtomicExpr();
+    EXPECT_EQ(Ast::T::SYMBOL, t->t);
+    EXPECT_EQ(Ast::O::LOGICAL_AND, t->op);
+    t = p.parseAtomicExpr();
+    EXPECT_EQ(Ast::T::BOOLEAN, t->t);
+    EXPECT_EQ(false, t->b);
+    t = p.parseAtomicExpr();
+    EXPECT_EQ(Ast::T::SYMBOL, t->t);
+    EXPECT_EQ(Ast::O::LOGICAL_OR, t->op);
+    t = p.parseAtomicExpr();
+    EXPECT_EQ(Ast::T::OPERATOR, t->t);
+    EXPECT_EQ(0, t->num);
+}
