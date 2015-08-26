@@ -4,8 +4,9 @@
 
 TEST(Interface, MixedTest)
 {
-    for (auto str : {"a1+1", "a.f(x,y)^3 <= 1^2", "(name > \"a\"+3 || (x != 3))"
-        ""}) {
+    for (auto str : {
+        "1+2+3", "a1+1", "a.f(x,y)^3 <= 1^2", "(name > \"a\"+3 ||" " (x != 3))"
+    }) {
         Expression e(str);
         EXPECT_TRUE(e) << str;
     }
