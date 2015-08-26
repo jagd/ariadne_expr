@@ -272,3 +272,47 @@ TEST(Parser, parseMulDivModExpr3)
         EXPECT_EQ("b", t->right->right->str);
     }
 }
+
+TEST(Parser, parsePlusMinusExpr1)
+{
+    for (auto str : {"a+-b", " a + -b", "a +-b", "a+- b"}) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parsePlusMinusExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+        EXPECT_EQ(Ast::T::OPERATOR, t->t);
+        EXPECT_EQ(Ast::O::PLUS, t->op);
+        EXPECT_TRUE(static_cast<bool>(t->left));
+        EXPECT_EQ(Ast::T::SYMBOL, t->left->t);
+        EXPECT_EQ("a", t->left->str);
+        EXPECT_TRUE(static_cast<bool>(t->right));
+        EXPECT_EQ(Ast::T::OPERATOR, t->right->t);
+        EXPECT_EQ(Ast::O::MINUS, t->right->op);
+        EXPECT_FALSE(static_cast<bool>(t->right->left));
+        EXPECT_TRUE(static_cast<bool>(t->right->right));
+        EXPECT_EQ(Ast::T::SYMBOL, t->right->right->t);
+        EXPECT_EQ("b", t->right->right->str);
+    }
+}
+
+TEST(Parser, parsePlusMinusExpr2)
+{
+    for (auto str : {"a--b", " a - -b", "a --b", "a-- b"}) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parsePlusMinusExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+        EXPECT_EQ(Ast::T::OPERATOR, t->t);
+        EXPECT_EQ(Ast::O::MINUS, t->op);
+        EXPECT_TRUE(static_cast<bool>(t->left));
+        EXPECT_EQ(Ast::T::SYMBOL, t->left->t);
+        EXPECT_EQ("a", t->left->str);
+        EXPECT_TRUE(static_cast<bool>(t->right));
+        EXPECT_EQ(Ast::T::OPERATOR, t->right->t);
+        EXPECT_EQ(Ast::O::MINUS, t->right->op);
+        EXPECT_FALSE(static_cast<bool>(t->right->left));
+        EXPECT_TRUE(static_cast<bool>(t->right->right));
+        EXPECT_EQ(Ast::T::SYMBOL, t->right->right->t);
+        EXPECT_EQ("b", t->right->right->str);
+    }
+}
