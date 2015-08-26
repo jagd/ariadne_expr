@@ -78,3 +78,15 @@ TEST(Parser, AtomicExpr2)
     EXPECT_EQ(Ast::T::REAL, t->t);
     EXPECT_DOUBLE_EQ(3.14e-3, t->num);
 }
+
+TEST(Parser, parseDeniableAtomicExpr1)
+{
+    std::istringstream s("!false");
+    auto p = Parser(s);
+    auto t = p.parseDeniableAtomicExpr();
+    EXPECT_EQ(Ast::T::OPERATOR, t->t);
+    EXPECT_EQ(Ast::O::LOGICAL_NOT, t->op);
+    EXPECT_FALSE(t->left);
+    EXPECT_EQ(Ast::T::BOOLEAN, t->right->t);
+    EXPECT_FALSE(t->right->b);
+}

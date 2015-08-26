@@ -4,7 +4,7 @@
 #include <istream>
 #include <cctype>
 
-Parser::Parser(std::istream &s) : s_(s)
+Parser::Parser(std::istream &s) : s_(s), tk_(TK::UNKNOWN)
 {
 }
 
@@ -143,7 +143,7 @@ Parser::TK Parser::peekAlpha()
     } while (std::isalpha(s_.peek()) || s_.peek() == '.');
     if (str_ == "true") {
         return TK::T;
-    } else if (str_ == "FALSE") {
+    } else if (str_ == "false") {
         return TK::F;
     }
     return TK::SYMBOL;
@@ -192,32 +192,39 @@ Parser::TK Parser::peekQuote()
     }
     s_.get(); // the tail quote
     return TK::STRING;
+
 }
 
 Ast::Ptr Parser::parseAtomicExpr()
 {
-    auto tk = token();
-    switch (tk) {
+    preToken();
+    switch (tk_) {
         case TK::END:
             msg_ = "unexpected end";
             return nullptr;
         case TK::SYMBOL:
+            swallowToken();
             return Ast::makeSymbol(str_);
         case TK::STRING:
+            swallowToken();
             return Ast::makeString(str_);
         case TK::REAL:
+            swallowToken();
             return Ast::make(num_);
         case TK::T:
+            swallowToken();
             return Ast::make(true);
         case TK::F:
+            swallowToken();
             return Ast::make(false);
         case TK::BRACKET_OPEN: {
-                Ast::Ptr root = parseExpr();
-                if (!root) {
-                    dumpPosition();
-                    return nullptr;
-                }
-                if (token() != TK::BRACKET_CLOSE) {
+            swallowToken();
+            Ast::Ptr root = parseExpr();
+            if (!root) {
+                dumpPosition();
+                return nullptr;
+            }
+            if (token() != TK::BRACKET_CLOSE) {
                     msg_ = "expect )";
                     dumpPosition();
                     return nullptr;
@@ -271,4 +278,48 @@ Parser::TK Parser::peekOR()
     }
     msg_ = "operator '|' not understandable, do you mean '|| ?";
     return TK::ERROR;
+}
+
+Ast::Ptr Parser::parseDeniableAtomicExpr()
+{
+    preToken();
+    if (tk_ != TK::OP) {
+        swallowToken();
+        return parseAtomicExpr();
+    }
+    Ast::Ptr root;
+    switch (op_) {
+        case Ast::O::PLUS:
+            swallowToken();
+            root = parseAtomicExpr();
+            break;
+        case Ast::O::MINUS:
+            swallowToken();
+            root = Ast::make(Ast::O::MINUS);
+            root->right = parseAtomicExpr();
+            break;
+        case Ast::O::LOGICAL_NOT:
+            swallowToken();
+            root = Ast::make(Ast::O::LOGICAL_NOT);
+            root->right = parseAtomicExpr();
+            break;
+        default:
+            swallowToken();
+            msg_ = "unacceptable operator " + msg_;
+            dumpPosition();
+            root.release();
+    }
+    return root;
+}
+
+void Parser::preToken(bool force)
+{
+    if (tk_ == TK::UNKNOWN || force) {
+        tk_  = token();
+    }
+}
+
+void Parser::swallowToken()
+{
+    tk_ = TK::UNKNOWN;
 }

@@ -14,13 +14,17 @@ public:
     Parser(std::istream &s);
     TK token();
     Ast::Ptr parseAtomicExpr();
+    Ast::Ptr parseDeniableAtomicExpr();
 private:
     std::istream &s_;
     std::string msg_;
     std::string str_;
     Ast::O op_;
+    TK tk_;
     double num_;
     void dumpPosition();
+    void preToken(bool force = false);
+    void swallowToken();
     TK peekEQ();
     TK peekLT();
     TK peekGT();
