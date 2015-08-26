@@ -222,17 +222,19 @@ Ast::Ptr Parser::parseAtomicExpr()
             swallowToken();
             return Ast::make(false);
         case TK::BRACKET_OPEN: {
-            swallowToken();
-            Ast::Ptr root = parseExpr();
-            if (!root) {
-                dumpPosition();
-                return nullptr;
-            }
-            if (token() != TK::BRACKET_CLOSE) {
+                swallowToken();
+                Ast::Ptr root = parseExpr();
+                if (!root) {
+                    dumpPosition();
+                    return nullptr;
+                }
+                preToken();
+                if (tk_ != TK::BRACKET_CLOSE) {
                     msg_ = "expect )";
                     dumpPosition();
                     return nullptr;
                 }
+                swallowToken();
                 return root;
             };
         case TK::ERROR:
@@ -253,11 +255,6 @@ void Parser::dumpPosition()
     msg_ += " before '";
     msg_ += word.empty() ? "the end" : word;
     msg_ += '\'';
-}
-
-Ast::Ptr Parser::parseExpr()
-{
-    return nullptr;
 }
 
 Parser::TK Parser::peekAND()
@@ -443,6 +440,35 @@ Ast::Ptr Parser::parseCmpExpr()
     }
     root->left = std::move(a);
     root->right = parsePlusMinusExpr();
+    if (!root->right) {
+        return nullptr;
+    }
+    return root;
+}
+
+Ast::Ptr Parser::parseExpr()
+{
+    preToken();
+    auto a = parseCmpExpr();
+    if (!a) {
+        return nullptr;
+    }
+    preToken();
+    if (tk_ != TK::OP) {
+        return a;
+    }
+    Ast::Ptr root;
+    switch (op_) {
+        case Ast::O::LOGICAL_AND:
+        case Ast::O::LOGICAL_OR:
+            swallowToken();
+            root = Ast::make(op_);
+            break;
+        default:
+            return a;
+    }
+    root->left = std::move(a);
+    root->right = parseExpr();
     if (!root->right) {
         return nullptr;
     }

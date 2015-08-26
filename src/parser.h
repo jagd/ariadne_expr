@@ -22,6 +22,8 @@ public:
     Ast::Ptr parseMulDivModExpr();
     Ast::Ptr parsePlusMinusExpr();
     Ast::Ptr parseCmpExpr();
+    Ast::Ptr parseExpr();
+    const std::string &msg() const { return msg_; }
 private:
     std::istream &s_;
     std::string msg_;
@@ -41,7 +43,6 @@ private:
     TK peekOR();
     Parser::TK pushBrackets();
     Parser::TK peekQuote();
-    Ast::Ptr parseExpr();
 };
 
 #endif

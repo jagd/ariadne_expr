@@ -89,25 +89,24 @@ TEST(Parser, parseDeniableAtomicExpr1)
     EXPECT_TRUE(static_cast<bool>(t));
     EXPECT_EQ(Ast::T::OPERATOR, t->t);
     EXPECT_EQ(Ast::O::LOGICAL_NOT, t->op);
-    EXPECT_FALSE(t->left);
+    EXPECT_FALSE(static_cast<bool>(t->left)) << p.msg();
     EXPECT_EQ(Ast::T::BOOLEAN, t->right->t);
     EXPECT_FALSE(t->right->b);
 }
 
-#if 0 // will be enabled in the future
 TEST(Parser, parseDeniableAtomicExpr2)
 {
     std::istringstream s("!(false)");
     auto p = Parser(s);
     auto t = p.parseDeniableAtomicExpr();
-    EXPECT_TRUE(static_cast<bool>(t));
+    EXPECT_TRUE(static_cast<bool>(t)) << p.msg();
     EXPECT_EQ(Ast::T::OPERATOR, t->t);
     EXPECT_EQ(Ast::O::LOGICAL_NOT, t->op);
-    EXPECT_FALSE(t->left);
+    EXPECT_FALSE(static_cast<bool>(t->left)) << p.msg();
+    EXPECT_TRUE(static_cast<bool>(t->right)) << p.msg();
     EXPECT_EQ(Ast::T::BOOLEAN, t->right->t);
     EXPECT_FALSE(t->right->b);
 }
-#endif
 
 TEST(Parser, parseDeniableAtomicExpr3)
 {
@@ -117,7 +116,7 @@ TEST(Parser, parseDeniableAtomicExpr3)
     EXPECT_TRUE(static_cast<bool>(t));
     EXPECT_EQ(Ast::T::OPERATOR, t->t);
     EXPECT_EQ(Ast::O::MINUS, t->op);
-    EXPECT_FALSE(t->left);
+    EXPECT_FALSE(static_cast<bool>(t->left)) << p.msg();
     EXPECT_EQ(Ast::T::NUMBER, t->right->t);
     EXPECT_EQ(1, t->right->num);
 }
