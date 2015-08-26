@@ -15,6 +15,7 @@ public:
     TK token();
     Ast::Ptr parseAtomicExpr();
     Ast::Ptr parseDeniableAtomicExpr();
+    Ast::Ptr parsePotExpr();
 private:
     std::istream &s_;
     std::string msg_;

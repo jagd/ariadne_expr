@@ -322,3 +322,23 @@ void Parser::swallowToken()
 {
     tk_ = TK::UNKNOWN;
 }
+
+Ast::Ptr Parser::parsePotExpr()
+{
+    Ast::Ptr root = parseAtomicExpr();;
+    if (!root) {
+        return nullptr;
+    }
+    preToken();
+    if (tk_ == TK::OP && op_ == Ast::O::POWER) {
+        swallowToken();
+        auto a = std::move(root);
+        root = Ast::make(Ast::O::POWER);
+        root->left = std::move(a);
+        root->right = parseDeniableAtomicExpr();
+        if (!root->right) {
+            return nullptr;
+        }
+    }
+    return root;
+}
