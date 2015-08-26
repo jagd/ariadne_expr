@@ -3,6 +3,7 @@
 
 #include "ast.h"
 #include <iosfwd>
+#include <functional>
 
 class Parser
 {
@@ -16,6 +17,8 @@ public:
     Ast::Ptr parseAtomicExpr();
     Ast::Ptr parseDeniableAtomicExpr();
     Ast::Ptr parsePotExpr();
+    Ast::Ptr parseDeniablePotExpr();
+    Ast::Ptr genericDeniableExpr(std::function<Ast::Ptr()>);
 private:
     std::istream &s_;
     std::string msg_;

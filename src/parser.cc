@@ -1,8 +1,8 @@
 #include "parser.h"
 #include "ast.h"
 
-#include <istream>
 #include <cctype>
+#include <istream>
 
 Parser::Parser(std::istream &s) : s_(s), tk_(TK::UNKNOWN)
 {
@@ -280,27 +280,27 @@ Parser::TK Parser::peekOR()
     return TK::ERROR;
 }
 
-Ast::Ptr Parser::parseDeniableAtomicExpr()
+Ast::Ptr Parser::genericDeniableExpr(std::function<Ast::Ptr()> f)
 {
     preToken();
     if (tk_ != TK::OP) {
-        return parseAtomicExpr();
+        return f();
     }
     Ast::Ptr root;
     switch (op_) {
         case Ast::O::PLUS:
             swallowToken();
-            root = parseAtomicExpr();
+            root = f();
             break;
         case Ast::O::MINUS:
             swallowToken();
             root = Ast::make(Ast::O::MINUS);
-            root->right = parseAtomicExpr();
+            root->right = f();
             break;
         case Ast::O::LOGICAL_NOT:
             swallowToken();
             root = Ast::make(Ast::O::LOGICAL_NOT);
-            root->right = parseAtomicExpr();
+            root->right = f();
             break;
         default:
             swallowToken();
@@ -309,6 +309,16 @@ Ast::Ptr Parser::parseDeniableAtomicExpr()
             root.release();
     }
     return root;
+}
+
+Ast::Ptr Parser::parseDeniableAtomicExpr()
+{
+    return genericDeniableExpr(std::bind(&Parser::parseAtomicExpr, this));
+}
+
+Ast::Ptr Parser::parseDeniablePotExpr()
+{
+    return genericDeniableExpr(std::bind(&Parser::parsePotExpr, this));
 }
 
 void Parser::preToken(bool force)
