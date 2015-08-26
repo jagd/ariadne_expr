@@ -16,12 +16,12 @@ TEST(Parser, Token1)
     std::istringstream s("A.f(x,y) 3.14e-2 + (\"wu\" - 4) /r!\t ");
     auto p = Parser(s);
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
-    EXPECT_EQ(Parser::TK::REAL, p.token());
+    EXPECT_EQ(Parser::TK::NUMBER, p.token());
     EXPECT_EQ(Parser::TK::OP, p.token());
     EXPECT_EQ(Parser::TK::BRACKET_OPEN, p.token());
     EXPECT_EQ(Parser::TK::STRING, p.token());
     EXPECT_EQ(Parser::TK::OP, p.token());
-    EXPECT_EQ(Parser::TK::REAL, p.token());
+    EXPECT_EQ(Parser::TK::NUMBER, p.token());
     EXPECT_EQ(Parser::TK::BRACKET_CLOSE, p.token());
     EXPECT_EQ(Parser::TK::OP, p.token());
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
@@ -34,7 +34,7 @@ TEST(Parser, Token2)
     std::istringstream s("A.f(x,y, \")\") 3.14e-2");
     auto p = Parser(s);
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
-    EXPECT_EQ(Parser::TK::REAL, p.token());
+    EXPECT_EQ(Parser::TK::NUMBER, p.token());
     EXPECT_EQ(Parser::TK::END, p.token());
 }
 
@@ -43,7 +43,7 @@ TEST(Parser, Token3)
     std::istringstream s("A.f(x,y, (((\")\")))) 3.14e-2");
     auto p = Parser(s);
     EXPECT_EQ(Parser::TK::SYMBOL, p.token());
-    EXPECT_EQ(Parser::TK::REAL, p.token());
+    EXPECT_EQ(Parser::TK::NUMBER, p.token());
     EXPECT_EQ(Parser::TK::END, p.token());
 }
 
@@ -77,7 +77,7 @@ TEST(Parser, AtomicExpr2)
     auto p = Parser(s);
     auto t = p.parseAtomicExpr();
     EXPECT_TRUE(static_cast<bool>(t));
-    EXPECT_EQ(Ast::T::REAL, t->t);
+    EXPECT_EQ(Ast::T::NUMBER, t->t);
     EXPECT_DOUBLE_EQ(3.14e-3, t->num);
 }
 
@@ -118,7 +118,7 @@ TEST(Parser, parseDeniableAtomicExpr3)
     EXPECT_EQ(Ast::T::OPERATOR, t->t);
     EXPECT_EQ(Ast::O::MINUS, t->op);
     EXPECT_FALSE(t->left);
-    EXPECT_EQ(Ast::T::REAL, t->right->t);
+    EXPECT_EQ(Ast::T::NUMBER, t->right->t);
     EXPECT_EQ(1, t->right->num);
 }
 
@@ -128,7 +128,7 @@ TEST(Parser, parseDeniableAtomicExpr4)
     auto p = Parser(s);
     auto t = p.parseDeniableAtomicExpr();
     EXPECT_TRUE(static_cast<bool>(t));
-    EXPECT_EQ(Ast::T::REAL, t->t);
+    EXPECT_EQ(Ast::T::NUMBER, t->t);
     EXPECT_EQ(1, t->num);
 }
 

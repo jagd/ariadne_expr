@@ -20,7 +20,7 @@ Parser::TK Parser::token()
         return peekAlpha();
     } else if (std::isdigit(peek)) {
         s_ >> num_;
-        return TK::REAL;
+        return TK::NUMBER;
     } else switch (peek) {
             case '-':
                 s_.get();
@@ -212,7 +212,7 @@ Ast::Ptr Parser::parseAtomicExpr()
         case TK::STRING:
             swallowToken();
             return Ast::makeString(str_);
-        case TK::REAL:
+        case TK::NUMBER:
             swallowToken();
             return Ast::make(num_);
         case TK::T:

@@ -9,7 +9,7 @@ class Parser
 {
 public:
     enum class TK {
-        UNKNOWN, ERROR, END, SYMBOL, STRING, REAL, T, F, OP,
+        UNKNOWN, ERROR, END, SYMBOL, STRING, NUMBER, T, F, OP,
         BRACKET_OPEN, BRACKET_CLOSE
     };
     Parser(std::istream &s);

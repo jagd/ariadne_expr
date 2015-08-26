@@ -6,7 +6,7 @@ Ast::Ast() : t(Ast::T::UNKNOWN)
 {
 }
 
-Ast::Ast(double v) : t(Ast::T::REAL), num(v)
+Ast::Ast(double v) : t(Ast::T::NUMBER), num(v)
 {
 }
 

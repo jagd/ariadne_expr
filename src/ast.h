@@ -7,7 +7,7 @@
 struct Ast
 {
     typedef std::unique_ptr<Ast> Ptr;
-    enum class T {UNKNOWN, SYMBOL, REAL, STRING, OPERATOR, BOOLEAN};
+    enum class T {UNKNOWN, SYMBOL, NUMBER, STRING, OPERATOR, BOOLEAN};
     enum class O {
         PLUS, MINUS, MULTIPLY, DIVISION, MODULUS, POWER,
         LOGICAL_AND,  LOGICAL_OR, LOGICAL_NOT,
