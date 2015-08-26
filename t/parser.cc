@@ -181,3 +181,94 @@ TEST(Parser, parsePotExpr2)
         EXPECT_EQ("b", t->right->right->str);
     }
 }
+
+TEST(Parser, parseMulDivModExpr1)
+{
+    std::istringstream s("a^-b%-c^-d");
+    auto p = Parser(s);
+    auto t = p.parseMulDivModExpr();
+
+    EXPECT_TRUE(static_cast<bool>(t));
+    EXPECT_EQ(Ast::T::OPERATOR, t->t);
+    EXPECT_EQ(Ast::O::MODULUS, t->op);
+
+    const auto &l = t->left;
+    EXPECT_TRUE(static_cast<bool>(l));
+    EXPECT_EQ(Ast::T::OPERATOR, l->t);
+    EXPECT_EQ(Ast::O::POWER, l->op);
+    EXPECT_TRUE(static_cast<bool>(l->left));
+    EXPECT_EQ(Ast::T::SYMBOL, l->left->t);
+    EXPECT_EQ("a", l->left->str);
+    EXPECT_TRUE(static_cast<bool>(l->right));
+    EXPECT_EQ(Ast::T::OPERATOR, l->right->t);
+    EXPECT_EQ(Ast::O::MINUS, l->right->op);
+    EXPECT_FALSE(static_cast<bool>(l->right->left));
+    EXPECT_TRUE(static_cast<bool>(l->right->right));
+    EXPECT_EQ(Ast::T::SYMBOL, l->right->right->t);
+    EXPECT_EQ("b", l->right->right->str);
+
+    const auto &r = t->right;
+    EXPECT_TRUE(static_cast<bool>(r));
+    EXPECT_EQ(Ast::T::OPERATOR, r->t);
+    EXPECT_EQ(Ast::O::MINUS, r->op);
+    EXPECT_FALSE(static_cast<bool>(r->left));
+
+    const auto &rr = r->right;
+    EXPECT_TRUE(static_cast<bool>(rr));
+    EXPECT_EQ(Ast::T::OPERATOR, rr->t);
+    EXPECT_EQ(Ast::O::POWER, rr->op);
+    EXPECT_TRUE(static_cast<bool>(rr->left));
+    EXPECT_EQ(Ast::T::SYMBOL, rr->left->t);
+    EXPECT_EQ("c", rr->left->str);
+    EXPECT_TRUE(static_cast<bool>(rr->right));
+    EXPECT_EQ(Ast::T::OPERATOR, rr->right->t);
+    EXPECT_EQ(Ast::O::MINUS, rr->right->op);
+    EXPECT_FALSE(static_cast<bool>(rr->right->left));
+    EXPECT_TRUE(static_cast<bool>(rr->right->right));
+    EXPECT_EQ(Ast::T::SYMBOL, rr->right->right->t);
+    EXPECT_EQ("d", rr->right->right->str);
+}
+
+TEST(Parser, parseMulDivModExpr2)
+{
+    for (auto str : {"a*-b", " a * -b", "a *-b", "a*- b"}) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseMulDivModExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+        EXPECT_EQ(Ast::T::OPERATOR, t->t);
+        EXPECT_EQ(Ast::O::MULTIPLY, t->op);
+        EXPECT_TRUE(static_cast<bool>(t->left));
+        EXPECT_EQ(Ast::T::SYMBOL, t->left->t);
+        EXPECT_EQ("a", t->left->str);
+        EXPECT_TRUE(static_cast<bool>(t->right));
+        EXPECT_EQ(Ast::T::OPERATOR, t->right->t);
+        EXPECT_EQ(Ast::O::MINUS, t->right->op);
+        EXPECT_FALSE(static_cast<bool>(t->right->left));
+        EXPECT_TRUE(static_cast<bool>(t->right->right));
+        EXPECT_EQ(Ast::T::SYMBOL, t->right->right->t);
+        EXPECT_EQ("b", t->right->right->str);
+    }
+}
+
+TEST(Parser, parseMulDivModExpr3)
+{
+    for (auto str : {"a/-b", " a / -b", "a /-b", "a/- b"}) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseMulDivModExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+        EXPECT_EQ(Ast::T::OPERATOR, t->t);
+        EXPECT_EQ(Ast::O::DIVISION, t->op);
+        EXPECT_TRUE(static_cast<bool>(t->left));
+        EXPECT_EQ(Ast::T::SYMBOL, t->left->t);
+        EXPECT_EQ("a", t->left->str);
+        EXPECT_TRUE(static_cast<bool>(t->right));
+        EXPECT_EQ(Ast::T::OPERATOR, t->right->t);
+        EXPECT_EQ(Ast::O::MINUS, t->right->op);
+        EXPECT_FALSE(static_cast<bool>(t->right->left));
+        EXPECT_TRUE(static_cast<bool>(t->right->right));
+        EXPECT_EQ(Ast::T::SYMBOL, t->right->right->t);
+        EXPECT_EQ("b", t->right->right->str);
+    }
+}

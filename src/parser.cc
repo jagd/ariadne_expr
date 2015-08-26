@@ -38,6 +38,10 @@ Parser::TK Parser::token()
                 s_.get();
                 op_ = Ast::O::DIVISION;
                 return TK::OP;
+            case '%':
+                s_.get();
+                op_ = Ast::O::MODULUS;
+                return TK::OP;
             case '^':
                 s_.get();
                 op_ = Ast::O::POWER;
@@ -349,6 +353,42 @@ Ast::Ptr Parser::parsePotExpr()
         if (!root->right) {
             return nullptr;
         }
+    }
+    return root;
+}
+
+Ast::Ptr Parser::parseMulDivModExpr()
+{
+    preToken();
+    auto a = parseDeniablePotExpr();
+    if (!a) {
+        return nullptr;
+    }
+    preToken();
+    if (tk_ != TK::OP) {
+        return a;
+    }
+    Ast::Ptr root;
+    switch (op_) {
+        case Ast::O::MULTIPLY:
+            swallowToken();
+            root = Ast::make(Ast::O::MULTIPLY);
+            break;
+        case Ast::O::DIVISION:
+            swallowToken();
+            root = Ast::make(Ast::O::DIVISION);
+            break;
+        case Ast::O::MODULUS:
+            swallowToken();
+            root = Ast::make(Ast::O::MODULUS);
+            break;
+        default:
+            return a;
+    }
+    root->left = std::move(a);
+    root->right = parseDeniablePotExpr();
+    if (!root->right) {
+        return nullptr;
     }
     return root;
 }
