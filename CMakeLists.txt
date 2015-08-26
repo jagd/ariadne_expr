@@ -35,12 +35,15 @@ add_library(parser SHARED
     src/parser.h
     src/ast.h
     src/ast.cc
-    src/interface.h src/interface.cc)
+    src/interface.h
+    src/interface.cc
+    )
 set_target_properties(parser PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 add_executable(demo
 	src/main.cc
-	src/interface.h src/interface.cc)
+	src/interface.h
+	)
 target_link_libraries(demo parser)
 
 ########################################
@@ -50,6 +53,7 @@ if (GTEST_FOUND)
 set(all_tests
     test_parser
     test_ast
+    test_interface
 )
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS ${all_tests})
@@ -83,6 +87,18 @@ add_executable(test_ast
     t/ast.cc
 )
 target_link_libraries(test_ast ${GTEST_BOTH_LIBRARIES})
+
+add_test(interface test_interface)
+add_executable(test_interface
+    src/ast.h
+    src/ast.cc
+    src/parser.h
+    src/parser.cc
+    src/interface.cc
+    src/interface.h
+    t/interface.cc
+)
+target_link_libraries(test_interface ${GTEST_BOTH_LIBRARIES})
 
 ########################################
 endif (GTEST_FOUND)
