@@ -344,10 +344,12 @@ TEST(Parser, parseCmpExpr)
 
 TEST(Parser, parseExpr)
 {
-    for (auto str : {"a+c^(2*b.x.f(y+x))!=3||b||c", "a&&b||c^2^3^4*5"}) {
+    for (auto str : {"a+c^(2*b.x.f(y+x))!=3||b||c", "(a&&b)||c^2^3^4*5"}) {
         std::istringstream s(str);
         auto p = Parser(s);
         auto t = p.parseExpr();
-        EXPECT_TRUE(static_cast<bool>(t));
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        EXPECT_EQ(Ast::T::OPERATOR, t->t) << str;
+        EXPECT_EQ(Ast::O::LOGICAL_OR, t->op) << str;
     }
 }
