@@ -284,7 +284,6 @@ Ast::Ptr Parser::parseDeniableAtomicExpr()
 {
     preToken();
     if (tk_ != TK::OP) {
-        swallowToken();
         return parseAtomicExpr();
     }
     Ast::Ptr root;
