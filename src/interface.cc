@@ -34,7 +34,7 @@ bool Expression::parse(const std::string &expr)
     if (impl_->ast_) {
         if (!p.eof()) {
             impl_->hasError_ = true;
-            impl_->msg_ = "unprocessed components on the end,"
+            impl_->msg_ = "unprocessed components on the end, "
                 "maybe there is more than one expression given";
             return false;
         }
