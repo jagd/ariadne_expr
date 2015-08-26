@@ -40,7 +40,7 @@ deniable_atomic_expr	:= '+' + atomic_expr
 			 | atomic_expr
 
 pot_expr		:= atomic_expr + pot_expr_tail
-pot_expr_tail		:= '^' + deniable_atomic_expr
+pot_expr_tail		:= '^' + deniable_atomic_expr + pot_expr_tail
 			 | epsilon
 deniable_pot_expr	:= '+' + pot_expr
 			 | '-' + pot_expr
@@ -48,12 +48,12 @@ deniable_pot_expr	:= '+' + pot_expr
 			 | pot_expr
 
 muldivmod_expr		:= deniable_pot_expr + muldivmod_expr_tail
-muldivmod_expr_tail	:= '*' + deniable_pot_expr
-			 | '/' + deniable_pot_expr
-			 | '%' + deniable_pot_expr
+muldivmod_expr_tail	:= '*' + deniable_pot_expr + muldivmod_expr_tail
+			 | '/' + deniable_pot_expr + muldivmod_expr_tail
+			 | '%' + deniable_pot_expr + muldivmod_expr_tail
 			 | epsilon
 
 plus_minus_expr		:= muldivmod_expr + plus_minus_expr_tail
-plus_minus_expr_tail	:= '+' muldivmod_expr
-			 | '-' muldivmod_expr
+plus_minus_expr_tail	:= '+' muldivmod_expr + plus_minus_expr_tail
+			 | '-' muldivmod_expr + plus_minus_expr_tail
 			 | epsilon
