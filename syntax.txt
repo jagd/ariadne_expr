@@ -13,10 +13,10 @@ parameter_list		:= parameter_list
 // 			 | epsilon
 // parameter_list_tail	:= ',' + parameter_list
 
-expr		:= compare_expr + expr_tail
-expr_tail	:= '||' + expr
-		 | '&&' + expr
-		 | epsilon
+expr			:= compare_expr + expr_tail
+expr_tail		:= '||' + expr
+			 | '&&' + expr
+			 | epsilon
 
 cmp_expr		:= plus_minus_expr + cmp_expr_tail
 cmp_expr_tail		:= '==' + plus_minus_expr
