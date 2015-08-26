@@ -387,31 +387,11 @@ Ast::Ptr Parser::parseMulDivModExpr()
 
 Ast::Ptr Parser::parsePlusMinusExpr()
 {
-    preToken();
     auto a = parseMulDivModExpr();
     if (!a) {
         return nullptr;
     }
-    preToken();
-    if (tk_ != TK::OP) {
-        return a;
-    }
-    Ast::Ptr root;
-    switch (op_) {
-        case Ast::O::PLUS:
-        case Ast::O::MINUS:
-            swallowToken();
-            root = Ast::make(op_);
-            break;
-        default:
-            return a;
-    }
-    root->left = std::move(a);
-    root->right = parseMulDivModExpr();
-    if (!root->right) {
-        return nullptr;
-    }
-    return root;
+    return parsePlusMinusExprTail(std::move(a));
 }
 
 Ast::Ptr Parser::parseCmpExpr()
@@ -476,3 +456,26 @@ Ast::Ptr Parser::parseExpr()
     return root;
 }
 
+Ast::Ptr Parser::parsePlusMinusExprTail(Ast::Ptr a)
+{
+    preToken();
+    if (tk_ != TK::OP) {
+        return std::move(a);
+    }
+    Ast::Ptr root;
+    switch (op_) {
+        case Ast::O::PLUS:
+        case Ast::O::MINUS:
+            swallowToken();
+            root = Ast::make(op_);
+            break;
+        default:
+            return std::move(a);
+    }
+    root->left = std::move(a);
+    root->right = parseMulDivModExpr();
+    if (!root->right) {
+        return nullptr;
+    }
+    return parsePlusMinusExprTail(std::move(root));
+}

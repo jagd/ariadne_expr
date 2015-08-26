@@ -348,6 +348,30 @@ TEST(Parser, parsePlusMinusExpr2)
     }
 }
 
+TEST(Parser, parsePlusMinusExpr3)
+{
+    std::istringstream s("a-b-c");
+    auto p = Parser(s);
+    auto t = p.parsePlusMinusExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    EXPECT_EQ(Ast::T::OPERATOR, t->t);
+    EXPECT_EQ(Ast::O::MINUS, t->op);
+
+    EXPECT_TRUE(static_cast<bool>(t->left));
+    EXPECT_EQ(Ast::T::OPERATOR, t->left->t);
+    EXPECT_EQ(Ast::O::MINUS, t->left->op);
+    EXPECT_TRUE(static_cast<bool>(t->left->left));
+    EXPECT_EQ(Ast::T::SYMBOL, t->left->left->t);
+    EXPECT_EQ("a", t->right->left->str);
+    EXPECT_TRUE(static_cast<bool>(t->left->right));
+    EXPECT_EQ(Ast::T::SYMBOL, t->left->right->t);
+    EXPECT_EQ("b", t->left->right->str);
+
+    EXPECT_TRUE(static_cast<bool>(t->right));
+    EXPECT_EQ(Ast::T::SYMBOL, t->right->t);
+    EXPECT_EQ("c", t->right->str);
+}
+
 TEST(Parser, parseCmpExpr)
 {
     const char *expr[] = {"a==-b", "a!=-b", "a<-b", "a<=-b", "a>-b", "a>=-b"};

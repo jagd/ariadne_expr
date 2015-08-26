@@ -45,6 +45,7 @@ private:
     Parser::TK pushBrackets();
     Parser::TK peekQuote();
     bool eof_;
+    Ast::Ptr parsePlusMinusExprTail(Ast::Ptr);
 };
 
 #endif
