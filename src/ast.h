@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <set>
 
 struct Ast
 {
@@ -33,4 +34,7 @@ struct Ast
     std::unique_ptr<Ast> left;
     std::unique_ptr<Ast> right;
 };
+
+std::set<std::string> symbols(const Ast::Ptr &p);
+
 #endif

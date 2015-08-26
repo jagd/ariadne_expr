@@ -50,3 +50,22 @@ std::unique_ptr<Ast> Ast::make(bool b)
 {
     return std::unique_ptr<Ast>(new Ast(b));
 }
+
+void symbolsImpl(const Ast::Ptr &p, std::set<std::string> &s)
+{
+    if (!p) {
+        return;
+    }
+    if (p->t == Ast::T::SYMBOL) {
+        s.insert(p->str);
+    }
+    symbolsImpl(p->left, s);
+    symbolsImpl(p->right, s);
+}
+
+std::set<std::string> symbols(const Ast::Ptr &p)
+{
+    std::set<std::string> s;
+    symbolsImpl(p, s);
+    return s;
+}
