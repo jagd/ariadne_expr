@@ -48,6 +48,10 @@ Parser::TK Parser::token()
             case ')':
                 s_.get();
                 return TK::BRACKET_CLOSE;
+            case '&':
+                return peekAND();
+            case '|':
+                return peekOR();
             case '=':
                 return peekEQ();
             case '<':
@@ -73,7 +77,7 @@ Parser::TK Parser::peekEQ()
         op_ = Ast::O::CMP_EQ;
         return TK::OP;
     }
-    msg_ = "operator '=' not understandable";
+    msg_ = "operator '=' not understandable, do you mean '==' ?";
     return TK::ERROR;
 }
 
@@ -220,6 +224,10 @@ Ast::Ptr Parser::parseAtomicExpr()
                 }
                 return root;
             };
+        case TK::ERROR:
+            msg_ += "| error";
+            dumpPosition();
+            return nullptr;
         default:
             msg_ = "expect something";
             dumpPosition();
@@ -239,4 +247,28 @@ void Parser::dumpPosition()
 Ast::Ptr Parser::parseExpr()
 {
     return nullptr;
+}
+
+Parser::TK Parser::peekAND()
+{
+    s_.get();
+    const auto next = s_.get();
+    if (next == '&') {
+        op_ = Ast::O::LOGICAL_AND;
+        return TK::OP;
+    }
+    msg_ = "operator '&' not understandable, do you mean '&&' ?";
+    return TK::ERROR;
+}
+
+Parser::TK Parser::peekOR()
+{
+    s_.get();
+    const auto next = s_.get();
+    if (next == '|') {
+        op_ = Ast::O::LOGICAL_OR;
+        return TK::OP;
+    }
+    msg_ = "operator '|' not understandable, do you mean '|| ?";
+    return TK::ERROR;
 }

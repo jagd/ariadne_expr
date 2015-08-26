@@ -9,7 +9,7 @@ struct Ast
     typedef std::unique_ptr<Ast> Ptr;
     enum class T {UNKNOWN, SYMBOL, REAL, STRING, OPERATOR, BOOLEAN};
     enum class O {
-        PLUS, MINUS, MULTIPLY, DIVISION, POWER, LOGICAL_AND,  LOGICAL_OR,
+        PLUS, MINUS, MULTIPLY, DIVISION, POWER, LOGICAL_AND, LOGICAL_OR,
         LOGICAL_NOT, CMP_EQ, CMP_NE, CMP_GT, CMP_GE, CMP_LT, CMP_LE
     };
     Ast();

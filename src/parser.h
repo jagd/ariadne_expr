@@ -26,9 +26,10 @@ private:
     TK peekGT();
     TK peekNot();
     TK peekAlpha();
+    TK peekAND();
+    TK peekOR();
     Parser::TK pushBrackets();
     Parser::TK peekQuote();
-
     Ast::Ptr parseExpr();
 };
 
