@@ -76,105 +76,120 @@ static Ast::Ptr aadd(
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr asub(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr amul(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr adiv(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr amod(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr apow(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr land(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr lor(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr lnot(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr ceq(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr cne(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr cgt(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr cge(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr clt(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr cle(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     const Ast::Dict &dict,
     std::string &msg
-);
+)
+{}
 
 static Ast::Ptr
 opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
@@ -271,6 +286,8 @@ Ast::Ast(const Ast &root)
         case T::BOOLEAN:
             b = root.b;
             break;
+        default:
+            assert(false /* unreachable */);
     }
     if (root.left) {
         left.reset(new Ast(*(root.left)));
