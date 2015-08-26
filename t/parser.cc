@@ -290,18 +290,20 @@ TEST(Parser, parseMulDivModExpr4)
     EXPECT_TRUE(static_cast<bool>(t));
     EXPECT_EQ(Ast::T::OPERATOR, t->t);
     EXPECT_EQ(Ast::O::DIVISION, t->op);
+
     EXPECT_TRUE(static_cast<bool>(t->left));
-    EXPECT_EQ(Ast::T::SYMBOL, t->left->t);
-    EXPECT_EQ("a", t->left->str);
+    EXPECT_EQ(Ast::T::OPERATOR, t->left->t);
+    EXPECT_EQ(Ast::O::DIVISION, t->left->op);
+    EXPECT_TRUE(static_cast<bool>(t->left->left));
+    EXPECT_EQ(Ast::T::SYMBOL, t->left->left->t);
+    EXPECT_EQ("a", t->left->left->str);
+    EXPECT_TRUE(static_cast<bool>(t->left->right));
+    EXPECT_EQ(Ast::T::SYMBOL, t->left->right->t);
+    EXPECT_EQ("b", t->left->right->str);
+
     EXPECT_TRUE(static_cast<bool>(t->right));
-    EXPECT_EQ(Ast::T::OPERATOR, t->right->t);
-    EXPECT_EQ(Ast::O::DIVISION, t->right->op);
-    EXPECT_TRUE(static_cast<bool>(t->right->left));
-    EXPECT_EQ(Ast::T::SYMBOL, t->right->left->t);
-    EXPECT_EQ("b", t->right->left->str);
-    EXPECT_TRUE(static_cast<bool>(t->right->right));
-    EXPECT_EQ(Ast::T::SYMBOL, t->right->right->t);
-    EXPECT_EQ("c", t->right->right->str);
+    EXPECT_EQ(Ast::T::SYMBOL, t->right->t);
+    EXPECT_EQ("c", t->right->str);
 }
 
 TEST(Parser, parsePlusMinusExpr1)
@@ -362,7 +364,7 @@ TEST(Parser, parsePlusMinusExpr3)
     EXPECT_EQ(Ast::O::MINUS, t->left->op);
     EXPECT_TRUE(static_cast<bool>(t->left->left));
     EXPECT_EQ(Ast::T::SYMBOL, t->left->left->t);
-    EXPECT_EQ("a", t->right->left->str);
+    EXPECT_EQ("a", t->left->left->str);
     EXPECT_TRUE(static_cast<bool>(t->left->right));
     EXPECT_EQ(Ast::T::SYMBOL, t->left->right->t);
     EXPECT_EQ("b", t->left->right->str);
