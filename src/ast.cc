@@ -147,10 +147,18 @@ static Ast::Ptr aadd(
 static Ast::Ptr asub(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
-{}
+{
+    assert(l && r);
+    const char *opDesc = "subtract";
+    std::ostringstream os;
+    if (l->t == Ast::T::NUMBER && r->t == Ast::T::NUMBER) {
+        return Ast::make(l->num - r->num);
+    }
+    msg = opError(l,r, opDesc);
+    return nullptr;
+}
 
 static Ast::Ptr amul(
     const Ast::Ptr &l,
@@ -272,7 +280,7 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
         case Ast::O::PLUS:
             return aadd(l,r,msg);
         case Ast::O::MINUS:
-            return asub(l,r,dict,msg);
+            return asub(l,r,msg);
         case Ast::O::MULTIPLY:
             return amul(l,r,dict,msg);
         case Ast::O::DIVISION:

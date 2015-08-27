@@ -68,8 +68,39 @@ TEST(Ast, EvalAdd3)
 TEST(Ast, EvalAddFail)
 {
     for (const auto str : {
-        "1+a+3", "true+1", "2+true", "true+\"false\"", "\"t\"+true"}
-        ) {
+        "1+a+3", "true+1", "2+true", "true+\"false\"", "\"t\"+true"
+    }) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}
+
+TEST(Ast, EvalSub)
+{
+    std::istringstream s("1-2-3");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(-4, v->num);
+}
+
+TEST(Ast, EvalSubFail)
+{
+    for (const auto str : {
+        "1-\"s\"", "\"s\"-1", "true-1", "2-true", "true-\"false\"",
+        "\"t\"-true"
+    } ) {
         std::istringstream s(str);
         auto p = Parser(s);
         auto t = p.parseExpr();
