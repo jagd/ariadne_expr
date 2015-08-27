@@ -479,3 +479,63 @@ TEST(Ast, EvalEqFail)
         EXPECT_FALSE(static_cast<bool>(v)) << str;
     }
 }
+
+TEST(Ast, EvalCmp1)
+{
+    for (const auto str : {
+        "4>3", "\"b\">\"a\"", "\"a\"*3>\"a\"",
+        "3<4", "\"a\"<\"b\"", "\"a\"<\"a\"*3",
+        "4>=3", "\"b\">=\"a\"", "\"a\"*3>=\"a\"",
+        "3<=4", "\"a\"<=\"b\"", "\"a\"<=\"a\"*3"
+    }) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_TRUE(static_cast<bool>(v)) << str;
+        EXPECT_EQ(Ast::T::BOOLEAN, v->t) << str;
+        EXPECT_TRUE(v->b) << str;
+    }
+}
+
+TEST(Ast, EvalCmp2)
+{
+    for (const auto str : {
+        "4<3", "\"b\"<\"a\"", "\"a\"*3<\"a\"",
+        "3>4", "\"a\">\"b\"", "\"a\">\"a\"*3",
+        "4<=3", "\"b\"<=\"a\"", "\"a\"*3<=\"a\"",
+        "3>=4", "\"a\">=\"b\"", "\"a\">=\"a\"*3"
+    }) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_TRUE(static_cast<bool>(v)) << str;
+        EXPECT_EQ(Ast::T::BOOLEAN, v->t) << str;
+        EXPECT_FALSE(v->b) << str;
+    }
+}
+
+TEST(Ast, EvalCmqFail)
+{
+    for (const auto str : {
+        "true > false", "true >= false", "true < false", "true <= false",
+        "1<\"2\"", "1>\"2\"", "1<=\"2\"", "1>=\"2\"",
+        "true<\"2\"", "false>\"2\"", "false<=\"2\"", "true>=\"2\""
+    } ) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}

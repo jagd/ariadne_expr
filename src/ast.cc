@@ -332,33 +332,55 @@ static Ast::Ptr cne(
     return nullptr;
 }
 
+#define CMP_COMMON(X) do {\
+        assert(l && r);\
+        const char *opDesc = "apply " #X "on";\
+        std::ostringstream os;\
+        if (l->t == Ast::T::STRING && r->t == Ast::T::STRING) {\
+        return Ast::make(l->str X r->str);\
+        }\
+        if (l->t == Ast::T::NUMBER && r->t == Ast::T::NUMBER) {\
+        return Ast::make(l->num X r->num);\
+        }\
+        msg = opError(l,r, opDesc);\
+        return nullptr;\
+    } while(false);
+
 static Ast::Ptr cgt(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
+{
+    CMP_COMMON(>);
+}
 
 static Ast::Ptr cge(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
+{
+    CMP_COMMON(>=);
+}
 
 static Ast::Ptr clt(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
+{
+    CMP_COMMON(<);
+}
 
 static Ast::Ptr cle(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
+{
+    CMP_COMMON(<=);
+}
 
 static std::string uniError(const Ast::Ptr &root)
 {
