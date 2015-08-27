@@ -221,7 +221,6 @@ static Ast::Ptr adiv(
 static Ast::Ptr amod(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {
@@ -243,7 +242,6 @@ static Ast::Ptr amod(
 static Ast::Ptr apow(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -251,7 +249,6 @@ static Ast::Ptr apow(
 static Ast::Ptr land(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -259,7 +256,6 @@ static Ast::Ptr land(
 static Ast::Ptr lor(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -267,7 +263,6 @@ static Ast::Ptr lor(
 static Ast::Ptr lnot(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -275,7 +270,6 @@ static Ast::Ptr lnot(
 static Ast::Ptr ceq(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -283,7 +277,6 @@ static Ast::Ptr ceq(
 static Ast::Ptr cne(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -291,7 +284,6 @@ static Ast::Ptr cne(
 static Ast::Ptr cgt(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -299,7 +291,6 @@ static Ast::Ptr cgt(
 static Ast::Ptr cge(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -307,7 +298,6 @@ static Ast::Ptr cge(
 static Ast::Ptr clt(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -315,7 +305,6 @@ static Ast::Ptr clt(
 static Ast::Ptr cle(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
 {}
@@ -342,27 +331,27 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
         case Ast::O::DIVISION:
             return adiv(l,r,msg);
         case Ast::O::MODULO:
-            return amod(l,r,dict,msg);
+            return amod(l,r,msg);
         case Ast::O::POWER:
-            return apow(l,r,dict,msg);
+            return apow(l,r,msg);
         case Ast::O::LOGICAL_AND:
-            return land(l,r,dict,msg);
+            return land(l,r,msg);
         case Ast::O::LOGICAL_OR:
-            return lor(l,r,dict,msg);
+            return lor(l,r,msg);
         case Ast::O::LOGICAL_NOT:
-            return lnot(l,r,dict,msg);
+            return lnot(l,r,msg);
         case Ast::O::CMP_EQ:
-            return ceq(l,r,dict,msg);
+            return ceq(l,r,msg);
         case Ast::O::CMP_NE:
-            return cne(l,r,dict,msg);
+            return cne(l,r,msg);
         case Ast::O::CMP_GT:
-            return cgt(l,r,dict,msg);
+            return cgt(l,r,msg);
         case Ast::O::CMP_GE:
-            return cge(l,r,dict,msg);
+            return cge(l,r,msg);
         case Ast::O::CMP_LT:
-            return clt(l,r,dict,msg);
+            return clt(l,r,msg);
         case Ast::O::CMP_LE:
-            return cle(l,r,dict,msg);
+            return cle(l,r,msg);
     }
     return nullptr;
 }
