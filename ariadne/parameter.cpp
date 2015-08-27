@@ -71,7 +71,7 @@ void parameter::print() const {
     else if(_type == PT_CHAR) cout<<_value.c;
     else if(_type == PT_INTEGER) cout<<_value.i;
     else if(_type == PT_REAL) cout<<_value.r;
-    else if(_type == PT_STRING) cout<<_value.r;
+    else if(_type == PT_STRING) cout<<_value.s;
     cout<<endl;
 }
 
