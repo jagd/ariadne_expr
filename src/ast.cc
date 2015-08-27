@@ -261,7 +261,16 @@ static Ast::Ptr land(
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
+{
+    assert(l && r);
+    const char *opDesc = "apply && on";
+    std::ostringstream os;
+    if (l->t == Ast::T::BOOLEAN && r->t == Ast::T::BOOLEAN) {
+        return Ast::make(l->b && r->b);
+    }
+    msg = opError(l,r, opDesc);
+    return nullptr;
+}
 
 static Ast::Ptr lor(
     const Ast::Ptr &l,
@@ -386,8 +395,10 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
         case Ast::O::POWER:
             return apow(l,r,msg);
         case Ast::O::LOGICAL_AND:
+            // no short circuit
             return land(l,r,msg);
         case Ast::O::LOGICAL_OR:
+            // no short circuit
             return lor(l,r,msg);
         case Ast::O::CMP_EQ:
             return ceq(l,r,msg);
