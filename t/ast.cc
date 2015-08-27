@@ -111,3 +111,47 @@ TEST(Ast, EvalSubFail)
         EXPECT_FALSE(static_cast<bool>(v)) << str;
     }
 }
+
+TEST(Ast, EvalMul)
+{
+    std::istringstream s("2*2*3");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto v = eval(t, Ast::Dict(), msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(12, v->num);
+}
+
+TEST(Ast, EvalMul2)
+{
+    std::istringstream s("2*a*3");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    d["a"] = Ast::makeString("a");
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::STRING, v->t);
+    EXPECT_EQ("aaaaaa", v->str);
+}
+
+TEST(Ast, EvalMulFail)
+{
+    for (const auto str : {
+        "true*1", "2*true", "true*\"false\"", "\"t\"*true"
+    } ) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}

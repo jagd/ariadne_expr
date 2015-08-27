@@ -163,10 +163,40 @@ static Ast::Ptr asub(
 static Ast::Ptr amul(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
-{}
+{
+    assert(l && r);
+    const char *opDesc = "add";
+    std::ostringstream os;
+    switch (l->t) {
+        case Ast::T::NUMBER:
+            switch (r->t) {
+                case Ast::T::NUMBER:
+                    return Ast::make(l->num * r->num);
+                case Ast::T::STRING:
+                    for (int i = 0; i < static_cast<int>(l->num); ++i) {
+                        os << r->str;
+                    }
+                    return Ast::makeString(os.str());
+                default:
+                    break;
+            }
+        case Ast::T::STRING:
+            switch (r->t) {
+                case Ast::T::NUMBER:
+                    for (int i = 0; i < static_cast<int>(r->num); ++i) {
+                        os << l->str;
+                    }
+                    return Ast::makeString(os.str());
+                default:
+                    break;
+            }
+        default:
+            msg = opError(l,r, opDesc);
+            return nullptr;
+    }
+}
 
 static Ast::Ptr adiv(
     const Ast::Ptr &l,
@@ -282,7 +312,7 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
         case Ast::O::MINUS:
             return asub(l,r,msg);
         case Ast::O::MULTIPLY:
-            return amul(l,r,dict,msg);
+            return amul(l,r,msg);
         case Ast::O::DIVISION:
             return adiv(l,r,dict,msg);
         case Ast::O::MODULUS:
