@@ -100,15 +100,15 @@ Expression::eval(const Expression::Dict &dict)
     }
     switch (r->t) {
         case Ast::T::NUMBER:
-            rp = std::make_shared<parameter>();
+            rp = std::make_shared<parameter>(PT_REAL);
             rp->setValueReal(r->num);
             break;
         case Ast::T::STRING:
-            rp = std::make_shared<parameter>();
+            rp = std::make_shared<parameter>(PT_STRING);
             rp->setValueString(r->str);
             break;
         case Ast::T::BOOLEAN:
-            rp = std::make_shared<parameter>();
+            rp = std::make_shared<parameter>(PT_REAL);
             rp->setValueReal(r->b);
             break;
         default:

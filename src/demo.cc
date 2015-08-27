@@ -18,11 +18,11 @@ std::shared_ptr<parameter> readParameter()
     std::istringstream ss(s);
     double x;
     if (ss >> x) {
-        auto p = std::make_shared<parameter>();
+        auto p = std::make_shared<parameter>(PT_REAL);
         p->setValueReal(x);
         return p;
     }
-    auto p = std::make_shared<parameter>();
+    auto p = std::make_shared<parameter>(PT_STRING);
     p->setValueString(s);
     return p;
 }
@@ -47,7 +47,7 @@ int main()
         dict[s] = p;
     }
     auto v = e.eval(dict);
-    if (!v.first) {
+    if (!e) { //  or to write if (!v.first)
         std::cerr << "Error: " << v.second << std::endl;
         return 3;
     }
