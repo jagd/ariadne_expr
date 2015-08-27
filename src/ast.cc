@@ -315,7 +315,22 @@ static Ast::Ptr cne(
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
+{
+    assert(l && r);
+    const char *opDesc = "apply != on";
+    std::ostringstream os;
+    if (l->t == Ast::T::BOOLEAN && r->t == Ast::T::BOOLEAN) {
+        return Ast::make(l->b != r->b);
+    }
+    if (l->t == Ast::T::STRING && r->t == Ast::T::STRING) {
+        return Ast::make(l->str != r->str);
+    }
+    if (l->t == Ast::T::NUMBER && r->t == Ast::T::NUMBER) {
+        return Ast::make(l->num != r->num);
+    }
+    msg = opError(l,r, opDesc);
+    return nullptr;
+}
 
 static Ast::Ptr cgt(
     const Ast::Ptr &l,

@@ -428,7 +428,8 @@ TEST(Ast, EvalOrFail)
 TEST(Ast, EvalEq1)
 {
     for (const auto str : {
-        "5==4+1", "true == true", "false == false", "\"a1\"==\"a\"+1"
+        "5==4+1", "true == true", "false == false", "\"a1\"==\"a\"+1",
+        "5!=4+3", "!true != true", "false != true"
     }) {
         std::istringstream s(str);
         auto p = Parser(s);
@@ -437,7 +438,7 @@ TEST(Ast, EvalEq1)
         std::string msg;
         auto d = Ast::Dict();
         auto v = eval(t, d, msg);
-        EXPECT_TRUE(static_cast<bool>(v));
+        EXPECT_TRUE(static_cast<bool>(v)) << str;
         EXPECT_EQ(Ast::T::BOOLEAN, v->t) << str;
         EXPECT_TRUE(v->b) << str;
     }
@@ -446,6 +447,7 @@ TEST(Ast, EvalEq1)
 TEST(Ast, EvalEq2)
 {
     for (const auto str : {
+        "5!=4+1", "true != true", "false != false", "\"a1\"!=\"a\"+1",
         "5==4+3", "!true == true", "false == true"
     }) {
         std::istringstream s(str);
@@ -464,7 +466,8 @@ TEST(Ast, EvalEq2)
 TEST(Ast, EvalEqFail)
 {
     for (const auto str : {
-        "1 == \"1\"",  "1 == true", "\"true\"==true"
+        "1 == \"1\"",  "1 == true", "\"true\"==true",
+        "1 != \"1\"",  "1 != true", "\"true\"!=true"
     } ) {
         std::istringstream s(str);
         auto p = Parser(s);
