@@ -69,11 +69,11 @@ std::pair<std::shared_ptr<parameter>, std::string>
 Expression::eval(const Expression::Dict &dict)
 {
     std::shared_ptr<parameter> rp;
-    if (impl_->ast_) {
-        return std::make_pair(
-            rp,
-            std::string("parse failed or no given expression"
-            ));
+    impl_->hasError_ = false;
+    if (!impl_->ast_) {
+        impl_->hasError_ = true;
+        impl_->msg_ ="parse failed or no given expression";
+        return std::make_pair(rp, impl_->msg_);
     }
     Ast::Dict d;
     for (const auto &i : dict) {
@@ -86,17 +86,16 @@ Expression::eval(const Expression::Dict &dict)
                 break;
             // case PT_BOOL:break;
             default:
-                return std::make_pair(
-                    rp,
-                    std::string("unrecognizable parameter type"
-                    ));
+                impl_->hasError_ = true;
+                impl_->msg_ = "unrecognizable parameter type";
+                return std::make_pair(rp, impl_->msg_);
         }
     }
-    std::string msg;
-    auto r = ::eval(impl_->ast_, d, msg);
+    auto r = ::eval(impl_->ast_, d, impl_->msg_ );
     if (!r) {
         if (impl_->ast_) {
-            return std::make_pair(rp, msg);
+            impl_->hasError_ = true;
+            return std::make_pair(rp, impl_->msg_);
         }
     }
     switch (r->t) {
@@ -115,5 +114,5 @@ Expression::eval(const Expression::Dict &dict)
         default:
             break;
     }
-    return std::make_pair(rp, msg);
+    return std::make_pair(rp, impl_->msg_);
 }

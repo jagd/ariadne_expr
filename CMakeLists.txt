@@ -48,8 +48,12 @@ add_library(parser SHARED
 set_target_properties(parser PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 add_executable(demo
-	src/main.cc
+	src/demo.cc
 	src/interface.h
+    ${ARIADNE_SRC_PATH}/entity.cpp
+    ${ARIADNE_SRC_PATH}/entity.h
+    ${ARIADNE_SRC_PATH}/parameter.cpp
+    ${ARIADNE_SRC_PATH}/parameter.h
 	)
 target_link_libraries(demo parser)
 
@@ -106,6 +110,10 @@ add_executable(test_interface
     src/interface.cc
     src/interface.h
     t/interface.cc
+    ${ARIADNE_SRC_PATH}/entity.cpp
+    ${ARIADNE_SRC_PATH}/entity.h
+    ${ARIADNE_SRC_PATH}/parameter.cpp
+    ${ARIADNE_SRC_PATH}/parameter.h
 )
 target_link_libraries(test_interface ${GTEST_BOTH_LIBRARIES})
 
