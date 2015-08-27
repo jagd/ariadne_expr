@@ -327,6 +327,7 @@ Ast::Ptr Parser::parseDeniablePotExpr()
 void Parser::preToken(bool force)
 {
     if (tk_ == TK::UNKNOWN || force) {
+        str_.clear();
         tk_  = token();
     }
 }
