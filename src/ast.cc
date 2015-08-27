@@ -318,6 +318,7 @@ Ast::Ptr eval(const Ast::Ptr &root, const Ast::Dict &dict, std::string &msg)
             if (i == dict.cend()) {
                 msg = "unsolvable symbol ";
                 msg += root->str;
+                return nullptr;
             }
             return i->second->clone();
         }

@@ -64,3 +64,19 @@ TEST(Ast, EvalAdd3)
     EXPECT_EQ(Ast::T::STRING, v->t);
     EXPECT_EQ("1a3", v->str);
 }
+
+TEST(Ast, EvalAddFail)
+{
+    for (const auto str : {
+        "1+a+3", "true+1", "2+true", "true+\"false\"", "\"t\"+true"}
+        ) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}
