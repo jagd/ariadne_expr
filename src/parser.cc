@@ -292,7 +292,8 @@ Ast::Ptr Parser::genericDeniableExpr(std::function<Ast::Ptr()> f)
     switch (op_) {
         case Ast::O::PLUS:
             swallowToken();
-            root = f();
+            root = Ast::make(Ast::O::PLUS);
+            root->right = f();
             break;
         case Ast::O::MINUS:
             swallowToken();

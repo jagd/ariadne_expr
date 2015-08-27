@@ -22,6 +22,74 @@ TEST(Ast, Make)
     EXPECT_EQ(Ast::T::SYMBOL, Ast::makeSymbol("wu")->t);
 }
 
+TEST(Ast, EvalUni1)
+{
+    std::istringstream s("!true");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto v = eval(t, Ast::Dict(), msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::BOOLEAN, v->t);
+    EXPECT_FALSE(v->b);
+}
+
+TEST(Ast, EvalUni2)
+{
+    std::istringstream s("!(false)");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto v = eval(t, Ast::Dict(), msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::BOOLEAN, v->t);
+    EXPECT_TRUE(v->b);
+}
+
+TEST(Ast, EvalUni3)
+{
+    std::istringstream s("+2");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto v = eval(t, Ast::Dict(), msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(2, v->num);
+}
+
+TEST(Ast, EvalUni4)
+{
+    std::istringstream s("-2");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto v = eval(t, Ast::Dict(), msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(-2, v->num);
+}
+
+TEST(Ast, EvalUniFail)
+{
+    for (const auto str : {
+        "+true", "+\"a\"", "!2", "!\"a\"", "-true", "-\"a\""
+    }) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}
+
 TEST(Ast, EvalAdd)
 {
     std::istringstream s("1+2+3");
@@ -93,6 +161,20 @@ TEST(Ast, EvalSub)
     EXPECT_TRUE(static_cast<bool>(v));
     EXPECT_EQ(Ast::T::NUMBER, v->t);
     EXPECT_EQ(-4, v->num);
+}
+
+TEST(Ast, EvalSub2)
+{
+    std::istringstream s("1--2-3");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(0, v->num);
 }
 
 TEST(Ast, EvalSubFail)
@@ -217,3 +299,34 @@ TEST(Ast, EvalModFail)
         EXPECT_FALSE(static_cast<bool>(v)) << str;
     }
 }
+
+TEST(Ast, EvalPow)
+{
+    std::istringstream s("-2^30");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(-1073741824, v->num);
+}
+
+TEST(Ast, EvalPowFail)
+{
+    for (const auto str : {
+        "1^\"s\"", "\"s\"^1", "true^1", "2^true", "true^\"false\"", "\"t\"^true"
+    } ) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}
+

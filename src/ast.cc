@@ -3,6 +3,7 @@
 #include <string>
 #include <cassert>
 #include <sstream>
+#include <cmath>
 
 Ast::Ast() : t(Ast::T::UNKNOWN)
 {
@@ -244,7 +245,16 @@ static Ast::Ptr apow(
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
+{
+    assert(l && r);
+    const char *opDesc = "apply ^ on";
+    std::ostringstream os;
+    if (l->t == Ast::T::NUMBER && r->t == Ast::T::NUMBER) {
+        return Ast::make(std::pow(l->num, r->num));
+    }
+    msg = opError(l,r, opDesc);
+    return nullptr;
+}
 
 static Ast::Ptr land(
     const Ast::Ptr &l,
@@ -309,16 +319,57 @@ static Ast::Ptr cle(
 )
 {}
 
+static std::string uniError(const Ast::Ptr &root)
+{
+    std::string msg = "cannot apply uni-operand operator ";
+    msg += toString(root->t);
+    msg += " on ";
+    msg += toString(root->right->t);
+    return msg;
+}
+
+static Ast::Ptr
+uniOperand(const Ast::Ptr &root, std::string &msg)
+{
+    switch (root->op)  {
+        case Ast::O::PLUS:
+            if (root->right->t == Ast::T::NUMBER) {
+                return root->right->clone();
+            }
+            break;
+        case Ast::O::MINUS:
+            if (root->right->t == Ast::T::NUMBER) {
+                return Ast::make(-root->right->num);
+            }
+            break;
+        case Ast::O::LOGICAL_NOT:
+            if (root->right->t == Ast::T::BOOLEAN) {
+                return Ast::make(!root->right->b);
+            }
+            break;
+        default:
+            break;
+    }
+    msg = uniError(root);
+    return nullptr;
+
+}
+
 static Ast::Ptr
 opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
 {
     assert(root->t == Ast::T::OPERATOR);
-    auto l = eval(root->left, dict, msg);
-    if (!l) {
-        return nullptr;
-    }
     auto r = eval(root->right, dict, msg);
     if (!r) {
+        return nullptr;
+    }
+    if (!root->left) {
+        auto rt = Ast::make(root->op);
+        rt->right = std::move(r);
+        return uniOperand(rt, msg);
+    }
+    auto l = eval(root->left, dict, msg);
+    if (!l) {
         return nullptr;
     }
     switch (root->op) {
@@ -338,8 +389,6 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
             return land(l,r,msg);
         case Ast::O::LOGICAL_OR:
             return lor(l,r,msg);
-        case Ast::O::LOGICAL_NOT:
-            return lnot(l,r,msg);
         case Ast::O::CMP_EQ:
             return ceq(l,r,msg);
         case Ast::O::CMP_NE:
