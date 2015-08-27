@@ -539,3 +539,31 @@ TEST(Ast, EvalCmqFail)
         EXPECT_FALSE(static_cast<bool>(v)) << str;
     }
 }
+
+TEST(Ast, MixedTest1)
+{
+    std::istringstream s("0--(-2^(3+(7*(2+2))-1)+1)*2 == -2147483646");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::BOOLEAN, v->t);
+    EXPECT_TRUE(v->b);
+}
+
+TEST(Ast, MixedTest2)
+{
+    std::istringstream s("\"a\"+(-2^(3+(7*(2+2))-1)+1)*2");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::STRING, v->t);
+    EXPECT_EQ("a-2147483646", v->str);
+}

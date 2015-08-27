@@ -4,6 +4,7 @@
 #include <cassert>
 #include <sstream>
 #include <cmath>
+#include <limits>
 
 Ast::Ast() : t(Ast::T::UNKNOWN)
 {
@@ -115,6 +116,7 @@ static Ast::Ptr aadd(
     assert(l && r);
     const char *opDesc = "add";
     std::ostringstream os;
+    os.precision(std::numeric_limits<double>::max_digits10);
     switch (l->t) {
         case Ast::T::NUMBER:
             switch (r->t) {
