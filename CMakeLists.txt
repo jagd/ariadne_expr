@@ -1,6 +1,9 @@
 project(ariadne_parser)
 cmake_minimum_required(VERSION 2.8)
 
+set(ARIADNE_SRC_PATH "ariadne")
+include_directories(SYSTEM ${ARIADNE_SRC_PATH})
+
 find_package(GTest QUIET)
 
 if (GTEST_FOUND)
@@ -37,6 +40,10 @@ add_library(parser SHARED
     src/ast.cc
     src/interface.h
     src/interface.cc
+    ${ARIADNE_SRC_PATH}/entity.cpp
+    ${ARIADNE_SRC_PATH}/entity.h
+    ${ARIADNE_SRC_PATH}/parameter.cpp
+    ${ARIADNE_SRC_PATH}/parameter.h
     )
 set_target_properties(parser PROPERTIES CXX_VISIBILITY_PRESET hidden)
 

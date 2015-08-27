@@ -5,11 +5,9 @@
 #include <utility>
 #include <string>
 #include <set>
+#include <map>
 
-#if 1
-enum class parameter_type
-{PT_UNDEFINED, PT_CHAR, PT_INTEGER, PT_REAL, PT_STRING};
-#endif
+#include <parameter.h> // ariadne code
 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef BUILDING_DLL
@@ -42,6 +40,8 @@ public:
     Expression();
     Expression(const std::string &expr);
     std::set<std::string> symbols() const;
+    typedef std::map<std::string, std::shared_ptr<parameter> > Dict;
+    std::pair<std::shared_ptr<parameter>, std::string> eval(const Dict &);
     operator bool() const;
     bool parse(const std::string &expr);
     const std::string msg() const;

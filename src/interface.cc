@@ -6,6 +6,8 @@
 #include <utility>
 #include <string>
 
+#include <parameter.h> // ariadne code
+
 struct ExpressionImpl
 {
     std::unique_ptr<Ast> ast_;
@@ -61,4 +63,57 @@ std::set<std::string> Expression::symbols() const
 const std::string Expression::msg() const
 {
     return impl_->msg_;
+}
+
+std::pair<std::shared_ptr<parameter>, std::string>
+Expression::eval(const Expression::Dict &dict)
+{
+    std::shared_ptr<parameter> rp;
+    if (impl_->ast_) {
+        return std::make_pair(
+            rp,
+            std::string("parse failed or no given expression"
+            ));
+    }
+    Ast::Dict d;
+    for (const auto &i : dict) {
+        switch (i.second->getType()) {
+            case PT_REAL:
+                d[i.first] = Ast::make(i.second->getValueReal());
+                break;
+            case PT_STRING:
+                d[i.first] = Ast::makeString(i.second->getValueString());
+                break;
+            // case PT_BOOL:break;
+            default:
+                return std::make_pair(
+                    rp,
+                    std::string("unrecognizable parameter type"
+                    ));
+        }
+    }
+    std::string msg;
+    auto r = ::eval(impl_->ast_, d, msg);
+    if (!r) {
+        if (impl_->ast_) {
+            return std::make_pair(rp, msg);
+        }
+    }
+    switch (r->t) {
+        case Ast::T::NUMBER:
+            rp = std::make_shared<parameter>();
+            rp->setValueReal(r->num);
+            break;
+        case Ast::T::STRING:
+            rp = std::make_shared<parameter>();
+            rp->setValueString(r->str);
+            break;
+        case Ast::T::BOOLEAN:
+            rp = std::make_shared<parameter>();
+            rp->setValueReal(r->b);
+            break;
+        default:
+            break;
+    }
+    return std::make_pair(rp, msg);
 }
