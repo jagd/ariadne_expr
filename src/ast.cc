@@ -201,10 +201,22 @@ static Ast::Ptr amul(
 static Ast::Ptr adiv(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
-{}
+{
+    assert(l && r);
+    const char *opDesc = "divide";
+    std::ostringstream os;
+    if (l->t == Ast::T::NUMBER && r->t == Ast::T::NUMBER) {
+        if (r->num == 0) {
+            msg = "divide by 0";
+            return nullptr;
+        }
+        return Ast::make(l->num / r->num);
+    }
+    msg = opError(l,r, opDesc);
+    return nullptr;
+}
 
 static Ast::Ptr amod(
     const Ast::Ptr &l,
@@ -314,7 +326,7 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
         case Ast::O::MULTIPLY:
             return amul(l,r,msg);
         case Ast::O::DIVISION:
-            return adiv(l,r,dict,msg);
+            return adiv(l,r,msg);
         case Ast::O::MODULUS:
             return amod(l,r,dict,msg);
         case Ast::O::POWER:

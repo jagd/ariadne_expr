@@ -155,3 +155,34 @@ TEST(Ast, EvalMulFail)
         EXPECT_FALSE(static_cast<bool>(v)) << str;
     }
 }
+
+TEST(Ast, EvalDiv)
+{
+    std::istringstream s("1/2/3");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_DOUBLE_EQ(1.0/2.0/3.0, v->num);
+}
+
+TEST(Ast, EvalDivFail)
+{
+    for (const auto str : {
+        "1/\"s\"", "\"s\"/1", "true/1", "2/true", "true/\"false\"",
+        "\"t\"/true", "1/0"
+    } ) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}
