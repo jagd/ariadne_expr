@@ -137,8 +137,11 @@ TEST(Parser, parseDeniableAtomicExpr4)
     auto p = Parser(s);
     auto t = p.parseDeniableAtomicExpr();
     EXPECT_TRUE(static_cast<bool>(t));
-    EXPECT_EQ(Ast::T::NUMBER, t->t);
-    EXPECT_EQ(1, t->num);
+    EXPECT_EQ(Ast::T::OPERATOR, t->t);
+    EXPECT_EQ(Ast::O::PLUS, t->op);
+    EXPECT_FALSE(static_cast<bool>(t->left)) << p.msg();
+    EXPECT_EQ(Ast::T::NUMBER, t->right->t);
+    EXPECT_EQ(1, t->right->num);
 }
 
 TEST(Parser, parseDeniableAtomicExpr5)
