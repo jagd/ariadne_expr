@@ -377,3 +377,50 @@ TEST(Ast, EvalAndFail)
         EXPECT_FALSE(static_cast<bool>(v)) << str;
     }
 }
+
+TEST(Ast, EvalOr1)
+{
+    std::istringstream s("false && false");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    std::string msg;
+    auto d = Ast::Dict();
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::BOOLEAN, v->t);
+    EXPECT_FALSE(v->b);
+}
+
+TEST(Ast, EvalOr2)
+{
+    for (const auto str : {"false||true", "true||false", "true||true"}) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t));
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_TRUE(static_cast<bool>(v));
+        EXPECT_EQ(Ast::T::BOOLEAN, v->t);
+        EXPECT_TRUE(v->b);
+    }
+}
+
+TEST(Ast, EvalOrFail)
+{
+    for (const auto str : {
+        "1||\"s\"", "\"s\"||1", "true||1", "2||true", "true||\"false\"",
+        "\"t\"||true", "1||2"
+    } ) {
+        std::istringstream s(str);
+        auto p = Parser(s);
+        auto t = p.parseExpr();
+        EXPECT_TRUE(static_cast<bool>(t)) << str;
+        std::string msg;
+        auto d = Ast::Dict();
+        auto v = eval(t, d, msg);
+        EXPECT_FALSE(static_cast<bool>(v)) << str;
+    }
+}

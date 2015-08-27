@@ -277,14 +277,16 @@ static Ast::Ptr lor(
     const Ast::Ptr &r,
     std::string &msg
 )
-{}
-
-static Ast::Ptr lnot(
-    const Ast::Ptr &l,
-    const Ast::Ptr &r,
-    std::string &msg
-)
-{}
+{
+    assert(l && r);
+    const char *opDesc = "apply || on";
+    std::ostringstream os;
+    if (l->t == Ast::T::BOOLEAN && r->t == Ast::T::BOOLEAN) {
+        return Ast::make(l->b || r->b);
+    }
+    msg = opError(l,r, opDesc);
+    return nullptr;
+}
 
 static Ast::Ptr ceq(
     const Ast::Ptr &l,
