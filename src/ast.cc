@@ -468,6 +468,8 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
             return clt(l,r,msg);
         case Ast::O::CMP_LE:
             return cle(l,r,msg);
+        default:
+            break;
     }
     return nullptr;
 }
