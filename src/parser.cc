@@ -41,7 +41,7 @@ Parser::TK Parser::token()
                 return TK::OP;
             case '%':
                 s_.get();
-                op_ = Ast::O::MODULUS;
+                op_ = Ast::O::MODULO;
                 return TK::OP;
             case '^':
                 s_.get();
@@ -469,7 +469,7 @@ Ast::Ptr Parser::parseMulDivModExprTail(Ast::Ptr &&a)
     switch (op_) {
         case Ast::O::MULTIPLY:
         case Ast::O::DIVISION:
-        case Ast::O::MODULUS:
+        case Ast::O::MODULO:
             swallowToken();
             root = Ast::make(op_);
             break;

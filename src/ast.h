@@ -12,7 +12,7 @@ struct Ast
     typedef std::map<std::string, Ast::Ptr> Dict;
     enum class T {UNKNOWN, SYMBOL, NUMBER, STRING, OPERATOR, BOOLEAN};
     enum class O {
-        PLUS, MINUS, MULTIPLY, DIVISION, MODULUS, POWER,
+        PLUS, MINUS, MULTIPLY, DIVISION, MODULO, POWER,
         LOGICAL_AND,  LOGICAL_OR, LOGICAL_NOT,
         CMP_EQ, CMP_NE, CMP_GT, CMP_GE, CMP_LT, CMP_LE,
     };

@@ -199,7 +199,7 @@ TEST(Parser, parseMulDivModExpr1)
 
     EXPECT_TRUE(static_cast<bool>(t));
     EXPECT_EQ(Ast::T::OPERATOR, t->t);
-    EXPECT_EQ(Ast::O::MODULUS, t->op);
+    EXPECT_EQ(Ast::O::MODULO, t->op);
 
     const auto &l = t->left;
     EXPECT_TRUE(static_cast<bool>(l));
