@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 #include <cassert>
+#include <sstream>
 
 Ast::Ast() : t(Ast::T::UNKNOWN)
 {
@@ -71,13 +72,77 @@ std::set<std::string> symbols(const Ast::Ptr &p)
     return s;
 }
 
+static const char *toString(Ast::T t)
+{
+    switch (t) {
+        case Ast::T::SYMBOL:
+            return "symbol";
+        case Ast::T::NUMBER:
+            return "number";
+        case Ast::T::STRING:
+            return "string";
+        case Ast::T::OPERATOR:
+            return "operator";
+        case Ast::T::BOOLEAN:
+            return "boolean";
+        default:
+            return "unknown";
+    }
+}
+
+static std::string opError(
+    const Ast::Ptr &l,
+    const Ast::Ptr &r,
+    const char *opDesc
+)
+{
+    std::string msg = "cannot ";
+    msg += opDesc;
+    msg += " ";
+    msg += toString(l->t);
+    msg += " and ";
+    msg += toString(r->t);
+    return msg;
+}
+
 static Ast::Ptr aadd(
     const Ast::Ptr &l,
     const Ast::Ptr &r,
-    const Ast::Dict &dict,
     std::string &msg
 )
-{}
+{
+    assert(l && r);
+    const char *opDesc = "add";
+    std::ostringstream os;
+    switch (l->t) {
+        case Ast::T::NUMBER:
+            switch (r->t) {
+                case Ast::T::NUMBER:
+                    return Ast::make(l->num + r->num);
+                case Ast::T::STRING:
+                    os << l->num;
+                    os << r->str;
+                    return Ast::makeString(os.str());
+                default:
+                    break;
+            }
+        case Ast::T::STRING:
+            os << l->str;
+            switch (r->t) {
+                case Ast::T::NUMBER:
+                    os << r->num;
+                    return Ast::makeString(os.str());
+                case Ast::T::STRING:
+                    os << r->str;
+                    return Ast::makeString(os.str());
+                default:
+                    break;
+            }
+        default:
+            msg = opError(l,r, opDesc);
+            return nullptr;
+    }
+}
 
 static Ast::Ptr asub(
     const Ast::Ptr &l,
@@ -205,7 +270,7 @@ opEval(const Ast::Ptr &root, const Ast::Dict &dict,  std::string &msg)
     }
     switch (root->op) {
         case Ast::O::PLUS:
-            return aadd(l,r,dict,msg);
+            return aadd(l,r,msg);
         case Ast::O::MINUS:
             return asub(l,r,dict,msg);
         case Ast::O::MULTIPLY:
@@ -254,7 +319,7 @@ Ast::Ptr eval(const Ast::Ptr &root, const Ast::Dict &dict, std::string &msg)
                 msg = "unsolvable symbol ";
                 msg += root->str;
             }
-            return i->second.clone();
+            return i->second->clone();
         }
         case Ast::T::OPERATOR:
             return opEval(root, dict, msg);

@@ -84,6 +84,8 @@ add_test(ast test_ast)
 add_executable(test_ast
     src/ast.h
     src/ast.cc
+    src/parser.h
+    src/parser.cc
     t/ast.cc
 )
 target_link_libraries(test_ast ${GTEST_BOTH_LIBRARIES})

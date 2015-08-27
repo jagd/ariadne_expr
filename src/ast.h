@@ -8,8 +8,8 @@
 
 struct Ast
 {
-    typedef std::map<std::string, Ast> Dict;
     typedef std::unique_ptr<Ast> Ptr;
+    typedef std::map<std::string, Ast::Ptr> Dict;
     enum class T {UNKNOWN, SYMBOL, NUMBER, STRING, OPERATOR, BOOLEAN};
     enum class O {
         PLUS, MINUS, MULTIPLY, DIVISION, MODULUS, POWER,
@@ -40,6 +40,10 @@ struct Ast
 };
 
 std::set<std::string> symbols(const Ast::Ptr &p);
-Ast::Ptr eval(const Ast::Ptr &, const Ast::Dict &, std::string &msg);
+Ast::Ptr eval(
+    const Ast::Ptr &,
+    const Ast::Dict &dict,
+    std::string &msg
+);
 
 #endif
