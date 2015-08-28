@@ -136,14 +136,22 @@ Parser::TK Parser::peekAlpha()
             peek = s_.peek();
         }
         s_ >> std::ws;
-        if (peek == '.') {
-            str_.push_back(s_.get());
-            return peekAlpha();
-        }
-        if (peek == '(') {
-            if (pushBrackets() == TK::ERROR) {
-                return TK::ERROR;
-            }
+        switch (peek) {
+            case '.':
+                str_.push_back(s_.get());
+                return peekAlpha();
+            case  '(':
+                if (pushBrackets(')') == TK::ERROR) {
+                    return TK::ERROR;
+                }
+                break;
+            case  '[':
+                if (pushBrackets(']') == TK::ERROR) {
+                    return TK::ERROR;
+                }
+                break;
+            default:
+                break;
         }
     } while (std::isalpha(s_.peek()) || s_.peek() == '.');
     if (str_ == "true") {
@@ -154,31 +162,39 @@ Parser::TK Parser::peekAlpha()
     return TK::SYMBOL;
 }
 
-Parser::TK Parser::pushBrackets()
+Parser::TK Parser::pushBrackets(char closeChar)
 {
     str_.push_back(s_.get());
-    while (s_.peek() != ')') {
-        if (s_.peek() == std::istream::traits_type::eof()) {
-            msg_ = "unmatched parethenses";
-            return TK::ERROR;
-        }
-        if (s_.peek() == '"') {
-            std::string t;
-            t.swap(str_);
-            const auto r = peekQuote();
-            if (r != TK::STRING) {
-                return r;
-            }
-            t += '"';
-            t += str_;
-            t += '"';
-            str_.swap(t);
-        } else if (s_.peek() == '(') {
-            if (pushBrackets() == TK::ERROR) {
+    while (s_.peek() != closeChar) {
+        switch (s_.peek()) {
+            case std::istream::traits_type::eof():
+                msg_ = "unmatched parethenses";
                 return TK::ERROR;
+            case '"': {
+                std::string t;
+                t.swap(str_);
+                const auto r = peekQuote();
+                if (r != TK::STRING) {
+                    return r;
+                }
+                t += '"';
+                t += str_;
+                t += '"';
+                str_.swap(t);
+                break;
             }
-        } else {
-            str_.push_back(s_.get());
+            case '(':
+                if (pushBrackets(')') == TK::ERROR) {
+                    return TK::ERROR;
+                }
+                break;
+            case '[':
+                if (pushBrackets(']') == TK::ERROR) {
+                    return TK::ERROR;
+                }
+                break;
+            default:
+                str_.push_back(s_.get());
         }
     }
     str_.push_back(s_.get());

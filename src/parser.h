@@ -42,7 +42,7 @@ private:
     TK peekAlpha();
     TK peekAND();
     TK peekOR();
-    Parser::TK pushBrackets();
+    Parser::TK pushBrackets(char closeChar);
     Parser::TK peekQuote();
     bool eof_;
     Ast::Ptr parsePlusMinusExprTail(Ast::Ptr &&);
