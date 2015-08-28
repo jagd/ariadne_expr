@@ -37,7 +37,7 @@ int main()
         return 1;
     }
     Expression::Dict dict;
-    for (auto s : e.symbols()) {
+    for (const auto &s : e.symbols()) {
         std::cout << s << " = ";
         auto p = readParameter();
         if (!p) {
