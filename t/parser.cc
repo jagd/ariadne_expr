@@ -63,12 +63,12 @@ TEST(Parser, Token5)
 
 TEST(Parser, AtomicExpr1)
 {
-    std::istringstream s("A.f(x,(y),z).x");
+    std::istringstream s("A.f(x[(2+2+a[-1])*3],(y),z).x");
     auto p = Parser(s);
     auto t = p.parseAtomicExpr();
     EXPECT_TRUE(static_cast<bool>(t));
     EXPECT_EQ(Ast::T::SYMBOL, t->t);
-    EXPECT_EQ("A.f(x,(y),z).x", t->str);
+    EXPECT_EQ("A.f(x[(2+2+a[-1])*3],(y),z).x", t->str);
 }
 
 TEST(Parser, AtomicExpr2)
