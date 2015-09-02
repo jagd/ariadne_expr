@@ -63,12 +63,12 @@ TEST(Parser, Token5)
 
 TEST(Parser, AtomicExpr1)
 {
-    std::istringstream s("if(A.f(x[(2+2+a[-1])*3],(y),z).x){c}else{b}");
+    std::istringstream s("if(A.f(x[(2+2+a[-1])*3],(y),z).x){c;}else{b}");
     auto p = Parser(s);
     auto t = p.parseAtomicExpr();
     EXPECT_TRUE(static_cast<bool>(t));
     EXPECT_EQ(Ast::T::SYMBOL, t->t);
-    EXPECT_EQ("if(A.f(x[(2+2+a[-1])*3],(y),z).x){c}else{b}", t->str);
+    EXPECT_EQ("if(A.f(x[(2+2+a[-1])*3],(y),z).x){c;}else{b}", t->str);
 }
 
 TEST(Parser, AtomicExpr2)
