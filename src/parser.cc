@@ -125,33 +125,42 @@ Parser::TK Parser::peekNot()
     return TK::OP;
 }
 
+#define CASE_BRACKETS \
+    case '(':\
+        if (pushBrackets(')') == TK::ERROR) {\
+            return TK::ERROR;\
+        }\
+        break;\
+    case '[':\
+        if (pushBrackets(']') == TK::ERROR) {\
+            return TK::ERROR;\
+        }\
+        break;\
+    case '{':\
+        if (pushBrackets('}') == TK::ERROR) {\
+            return TK::ERROR;\
+        }\
+        break;
+
 Parser::TK Parser::peekAlpha()
 {
-    long peek;
     do {
         str_.push_back(s_.get());
-        peek = s_.peek();
-        while (std::isalnum(peek)) {
+        while (std::isalnum(s_.peek())) {
             str_.push_back(s_.get());
-            peek = s_.peek();
         }
-        s_ >> std::ws;
-        switch (peek) {
-            case '.':
-                str_.push_back(s_.get());
-                return peekAlpha();
-            case  '(':
-                if (pushBrackets(')') == TK::ERROR) {
-                    return TK::ERROR;
-                }
-                break;
-            case  '[':
-                if (pushBrackets(']') == TK::ERROR) {
-                    return TK::ERROR;
-                }
-                break;
-            default:
-                break;
+        bool consumed = true;
+        while (consumed) {
+            s_ >> std::ws;
+            switch (s_.peek()) {
+                case '.':
+                    str_.push_back(s_.get());
+                    return peekAlpha();
+                CASE_BRACKETS
+                default:
+                    consumed = false;
+                    break;
+            }
         }
     } while (std::isalpha(s_.peek()) || s_.peek() == '.');
     if (str_ == "true") {
@@ -183,16 +192,7 @@ Parser::TK Parser::pushBrackets(char closeChar)
                 str_.swap(t);
                 break;
             }
-            case '(':
-                if (pushBrackets(')') == TK::ERROR) {
-                    return TK::ERROR;
-                }
-                break;
-            case '[':
-                if (pushBrackets(']') == TK::ERROR) {
-                    return TK::ERROR;
-                }
-                break;
+            CASE_BRACKETS
             default:
                 str_.push_back(s_.get());
         }
