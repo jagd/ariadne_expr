@@ -71,6 +71,16 @@ TEST(Parser, AtomicExpr1)
     EXPECT_EQ("if(A.f(x[(2+2+a[-1])*3],(y),z).x){c;}else{b}", t->str);
 }
 
+TEST(Parser, AtomicExpr1WithUnderScore)
+{
+    std::istringstream s("_if(_A.f(x_[(2+2+a[-1])*3],(y),z).x){c_;}else{_b}");
+    auto p = Parser(s);
+    auto t = p.parseAtomicExpr();
+    EXPECT_TRUE(static_cast<bool>(t));
+    EXPECT_EQ(Ast::T::SYMBOL, t->t);
+    EXPECT_EQ("_if(_A.f(x_[(2+2+a[-1])*3],(y),z).x){c_;}else{_b}", t->str);
+}
+
 TEST(Parser, AtomicExpr2)
 {
     std::istringstream s("3.14e-3");

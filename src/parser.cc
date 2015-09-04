@@ -16,7 +16,7 @@ Parser::TK Parser::token()
         eof_ = true;
         msg_ = "EOF";
         return TK::END;
-    } else if (std::isalpha(peek)) {
+    } else if (std::isalpha(peek) || peek == '_') {
         str_.clear();
         return peekAlpha();
     } else if (std::isdigit(peek)) {
@@ -146,7 +146,7 @@ Parser::TK Parser::peekAlpha()
 {
     do {
         str_.push_back(s_.get());
-        while (std::isalnum(s_.peek())) {
+        while (std::isalnum(s_.peek()) || s_.peek() == '_') {
             str_.push_back(s_.get());
         }
         bool consumed = true;
@@ -162,7 +162,7 @@ Parser::TK Parser::peekAlpha()
                     break;
             }
         }
-    } while (std::isalpha(s_.peek()) || s_.peek() == '.');
+    } while (std::isalpha(s_.peek()) || s_.peek() == '.' || s_.peek() == '_');
     if (str_ == "true") {
         return TK::T;
     } else if (str_ == "false") {
