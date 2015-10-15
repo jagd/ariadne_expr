@@ -567,3 +567,48 @@ TEST(Ast, MixedTest2)
     EXPECT_EQ(Ast::T::STRING, v->t);
     EXPECT_EQ("a-2147483646", v->str);
 }
+
+TEST(Ast, parseMixedSymbol1)
+{
+    std::istringstream s("a.f()+2");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+
+    std::string msg;
+    auto d = Ast::Dict();
+    d["a.f()"] = Ast::make(1.0);
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(3, v->num);
+}
+
+TEST(Ast, parseMixedSymbol2)
+{
+    std::istringstream s("a.function()+2");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+
+    std::string msg;
+    auto d = Ast::Dict();
+    d["a.function()"] = Ast::make(2.0);
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(4, v->num);
+}
+
+TEST(Ast, parseMixedSymbol3)
+{
+    std::istringstream s("a.function(1,1)+2");
+    auto p = Parser(s);
+    auto t = p.parseExpr();
+
+    std::string msg;
+    auto d = Ast::Dict();
+    d["a.function(1,1)"] = Ast::make(2.0);
+    auto v = eval(t, d, msg);
+    EXPECT_TRUE(static_cast<bool>(v));
+    EXPECT_EQ(Ast::T::NUMBER, v->t);
+    EXPECT_EQ(4, v->num);
+}
